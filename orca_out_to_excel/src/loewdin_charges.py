@@ -141,4 +141,4 @@ class LoewdinCharges(DataSectionWithInputs):
         except AttributeError:
             print(f'Error: {atom_label} was not found '
                   f'in {self._out_filename} (Loewdin Charges).')
-            return self._std_error_msg
+            return None

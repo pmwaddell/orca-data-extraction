@@ -122,8 +122,5 @@ class HOMOLUMOEnergies(DataSection):
         except AttributeError:
             print(f'HOMO/LUMO energy data not found in '
                   f'{self._out_filename}')
-            error_msg = 'ERROR: HOMO/LUMO energy data not found'
-            # TODO: consider using NULL instead of an error message string?
-            # consider that this may cause problems when putting the data into excel? test it first, then do the replacement
-            return {'HOMO energy': error_msg, 'LUMO energy': error_msg}
+            return {'HOMO energy': None, 'LUMO energy': None}
 

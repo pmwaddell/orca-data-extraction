@@ -92,7 +92,5 @@ class DipoleMoments(DataSection):
         except AttributeError:
             print(f'Dipole moments data not found in '
                   f'{self._out_filename} data.')
-            error_msg = f'ERROR: {self._section_name} data not found in ' \
-                        f'{self._out_filename}.'
-            return {'X': error_msg, 'Y': error_msg,
-                    'Z': error_msg, 'Tot': error_msg}
+            return {'X': None, 'Y': None,
+                    'Z': None, 'Tot': None}

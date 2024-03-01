@@ -109,7 +109,8 @@ class DataSection(ABC):
             else:
                 return result
         except KeyError:
-            return f'ERROR: {datum_label} not found in {self._section_name}.'
+            print(f'Error: {datum_label} not found in {self._section_name}.')
+            return None
 
     def get_section_name(self):
         """

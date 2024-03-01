@@ -62,11 +62,12 @@ class LoewdinChargeSums(DataSectionWithInputs):
             A string of the sum of Loewdin charges of atoms corresponding to
             the atom labels in the aforementioned tuple.
 
+        # TODO: does this part of the docstring need fixing??
         Raises
         ------
-        AttributeError
-            This occurs when the regex fails to find what it is looking
-            for, and returns NoneType. Then, .group(n) gives this error.
+        TypeError
+            This occurs when the regex (from the associated LoewdinCharges
+            instance) fails to find what it is looking for.
         """
         loewdin_charges = LoewdinCharges(
             self._out_filename, self._outfile_contents, atoms_tuple
@@ -75,13 +76,11 @@ class LoewdinChargeSums(DataSectionWithInputs):
         for atom_label in atoms_tuple:
             try:
                 charge_sum += float(loewdin_charges.get_datum(atom_label))
-            except ValueError:
-                error_msg = f'ERROR: {atom_label} not ' \
-                        f'found in {self._out_filename} ' \
-                        f'({loewdin_charges.get_section_name()}) ' \
-                        f'during attempt to sum charges.'
-                print(error_msg)
-                return error_msg
+            except TypeError:
+                print(f'Error: {atom_label} not found in {self._out_filename} '
+                      f'({loewdin_charges.get_section_name()}) during attempt '
+                      f'to sum charges.')
+                return None
         return str(charge_sum)
 
     def get_datum(self, atoms_tuple):
@@ -112,5 +111,6 @@ class LoewdinChargeSums(DataSectionWithInputs):
         try:
             return self._data[tuple(sorted(list(atoms_tuple)))]
         except KeyError:
-            return f'ERROR: {atoms_tuple} not found in {self._out_filename} ' \
-                   f'(Loewdin Charge Sums).'
+            print(f'ERROR: {atoms_tuple} not found in {self._out_filename} '
+                  f'(Loewdin Charge Sums).')
+            return None

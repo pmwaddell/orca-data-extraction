@@ -68,7 +68,7 @@ class BondAngles(DataSectionWithInputs):
 
         Raises
         ------
-        ValueError
+        TypeError
             This occurs when one of the atom labels in the input angle tuple
             does not have corresponding data in final_geom.
         """
@@ -87,29 +87,26 @@ class BondAngles(DataSectionWithInputs):
             atom0_x = float(final_geom.get_datum(atom0)['x'])
             atom0_y = float(final_geom.get_datum(atom0)['y'])
             atom0_z = float(final_geom.get_datum(atom0)['z'])
-        except ValueError:
+        except TypeError:
             print(f'Manual calculation failed for bond angle {atom0}-{atom1}-'
                   f'{atom2}: geometry data for {atom0} not found.')
-            return f'ERROR: geometry data for {atom0} not found during ' \
-                   f'3 atom angle calculation ({angle_tuple}).'
+            return None
         try:
             atom1_x = float(final_geom.get_datum(atom1)['x'])
             atom1_y = float(final_geom.get_datum(atom1)['y'])
             atom1_z = float(final_geom.get_datum(atom1)['z'])
-        except ValueError:
+        except TypeError:
             print(f'Manual calculation failed for bond angle {atom0}-{atom1}-'
                   f'{atom2}: geometry data for {atom1} not found.')
-            return f'ERROR: geometry data for {atom1} not found during ' \
-                   f'3 atom angle calculation ({angle_tuple}).'
+            return None
         try:
             atom2_x = float(final_geom.get_datum(atom2)['x'])
             atom2_y = float(final_geom.get_datum(atom2)['y'])
             atom2_z = float(final_geom.get_datum(atom2)['z'])
-        except ValueError:
+        except TypeError:
             print(f'Manual calculation failed for bond angle {atom0}-{atom1}-'
                   f'{atom2}: geometry data for {atom2} not found.')
-            return f'ERROR: geometry data for {atom2} not found during ' \
-                   f'3 atom angle calculation ({angle_tuple}).'
+            return None
         vector_01 = [atom0_x - atom1_x, atom0_y - atom1_y, atom0_z - atom1_z]
         vector_12 = [atom1_x - atom2_x, atom1_y - atom2_y, atom1_z - atom2_z]
         numerator = (vector_01[0] * vector_12[0]) + \
@@ -157,5 +154,6 @@ class BondAngles(DataSectionWithInputs):
                 return self._data[flipped_angle_tuple]
                 pass
             except KeyError:
-                return f'ERROR: {angle_tuple} not found in ' \
-                       f'{self._out_filename} (Bond Angles).'
+                print(f'Error: {angle_tuple} not found in '
+                      f'{self._out_filename} (Bond Angles).')
+                return None

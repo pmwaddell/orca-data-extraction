@@ -94,12 +94,12 @@ class TestStructureData(unittest.TestCase):
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum(
                 'Initial Geometry', '1 H')['x'],
-            self.test_sd_opt.get_std_error_msg()
+            None
         )
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum(
                 'Initial Geometry', '11 B')['x'],
-            self.test_sd_opt.get_std_error_msg()
+            None
         )
         print('Initial geometry test complete.\n')
 
@@ -153,12 +153,12 @@ class TestStructureData(unittest.TestCase):
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum(
                 'Final Geometry', '1 H')['x'],
-            self.test_sd_opt.get_std_error_msg()
+            None
         )
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum(
                 'Final Geometry', '11 B')['x'],
-            self.test_sd_opt.get_std_error_msg()
+            None
         )
         print('Final geometry test complete.\n')
 
@@ -213,13 +213,12 @@ class TestStructureData(unittest.TestCase):
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum(
                 'Bond Lengths', ('19 C', '11 B')),
-            "ERROR: geometry data for 11 B not found during interatomic "
-            "distance calculation (('19 C', '11 B'))."
+            None
         )
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum(
                 'Bond Lengths', ('19 C', '43 N')),
-            "ERROR: ('19 C', '43 N') not found in PPh3_opt.out (Bond Lengths)."
+            None
         )
         print('Bond length test complete.\n')
 
@@ -267,8 +266,7 @@ class TestStructureData(unittest.TestCase):
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum(
                 'Bond Angles', ('1 S', '2 S', '3 S')),
-            "ERROR: ('1 S', '2 S', '3 S') not found in PPh3_opt.out "
-            "(Bond Angles)."
+            None
         )
         print('Bond angle test complete.\n')
 
@@ -293,7 +291,7 @@ class TestStructureData(unittest.TestCase):
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum(
                 'Polarizability', 'alpha_xx'),
-            "ERROR: polarizability data not found"
+            None
         )
         print('Polarizability test complete.\n')
 
@@ -386,15 +384,15 @@ class TestStructureData(unittest.TestCase):
         # Test that '1 H' does not match '11 H' accidentally
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum('Mulliken Charges', '1 H'),
-            'ERROR: not found'
+            None
         )
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum('Mulliken Charges', '11 B'),
-            'ERROR: not found'
+            None
         )
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum('Mulliken Charges', '5 S'),
-            'ERROR: 5 S not found in Mulliken Charges.'
+            None
         )
         print('Mulliken charge test complete.\n')
 
@@ -443,8 +441,7 @@ class TestStructureData(unittest.TestCase):
             self.test_sd_opt.get_data_section_datum(
                 'Mulliken Charge Sums',
                 ('0 P', '1 C', '11 B', '19 C', '2 C', '3 H')),
-            'ERROR: 11 B not found in PPh3_opt.out (Mulliken Charges) '
-            'during attempt to sum charges.'
+            None
         )
         print('Mulliken charge sum test complete.\n')
 
@@ -469,15 +466,15 @@ class TestStructureData(unittest.TestCase):
         # Test that '1 H' does not match '11 H' accidentally
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum('Loewdin Charges', '1 H'),
-            'ERROR: not found'
+            None
         )
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum('Loewdin Charges', '11 B'),
-            'ERROR: not found'
+            None
         )
         self.assertEqual(
             self.test_sd_opt.get_data_section_datum('Loewdin Charges', '5 S'),
-            'ERROR: 5 S not found in Loewdin Charges.'
+            None
         )
         print('Loewdin charge test complete.\n')
 
@@ -527,8 +524,7 @@ class TestStructureData(unittest.TestCase):
             self.test_sd_opt.get_data_section_datum(
                 'Loewdin Charge Sums',
                 ('0 P', '1 H', '11 B', '19 C', '2 C', '3 H')),
-            "ERROR: ('0 P', '1 H', '11 B', '19 C', '2 C', '3 H') not found in "
-            "PPh3_opt.out (Loewdin Charge Sums)."
+            None
         )
         print('Loewdin charge sum test complete.\n')
 

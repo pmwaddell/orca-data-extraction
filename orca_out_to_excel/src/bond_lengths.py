@@ -68,7 +68,7 @@ class BondLengths(DataSectionWithInputs):
 
         Raises
         ------
-        ValueError
+        TypeError
             This occurs when one of the atom labels in the input bond tuple
             does not have corresponding data in _input_geoms.
         """
@@ -83,20 +83,18 @@ class BondLengths(DataSectionWithInputs):
             atom0_x = float(final_geom.get_datum(atom0)['x'])
             atom0_y = float(final_geom.get_datum(atom0)['y'])
             atom0_z = float(final_geom.get_datum(atom0)['z'])
-        except ValueError:
+        except TypeError:
             print(f'Manual calculation failed for bond {atom0}-{atom1}:'
                   f'{atom0} geometry data not found.')
-            return f'ERROR: geometry data for {atom0} not found during ' \
-                   f'interatomic distance calculation ({bond_tuple}).'
+            return None
         try:
             atom1_x = float(final_geom.get_datum(atom1)['x'])
             atom1_y = float(final_geom.get_datum(atom1)['y'])
             atom1_z = float(final_geom.get_datum(atom1)['z'])
-        except ValueError:
+        except TypeError:
             print(f'Manual calculation failed for bond {atom0}-{atom1}:'
                   f'{atom1} geometry data not found.')
-            return f'ERROR: geometry data for {atom1} not found during ' \
-                   f'interatomic distance calculation ({bond_tuple}).'
+            return None
         return str(
             round(math.sqrt(((atom0_x - atom1_x) ** 2) +
                              ((atom0_y - atom1_y) ** 2) +
@@ -133,5 +131,6 @@ class BondLengths(DataSectionWithInputs):
                 flipped_bond_tuple = (bond_tuple[1], bond_tuple[0])
                 return self._data[flipped_bond_tuple]
             except KeyError:
-                return f'ERROR: {bond_tuple} not found in ' \
-                       f'{self._out_filename} (Bond Lengths).'
+                print(f'ERROR: {bond_tuple} not found in '
+                      f'{self._out_filename} (Bond Lengths).')
+                return None
