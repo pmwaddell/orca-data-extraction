@@ -1,6 +1,6 @@
 {
   "PPh3_opt.out": {
-    "input filename": "PPh3_input.txt",
+    "input filename": "PPh3_test_input.txt",
     "Initial Geometry": {
       "0 P": {
         "x": "-1.89823",
@@ -33,9 +33,14 @@
         "z": "3.90754"
       },
       "11 B": {
-        "x": "ERROR: not found",
-        "y": "ERROR: not found",
-        "z": "ERROR: not found"
+        "x": null,
+        "y": null,
+        "z": null
+      },
+      "1 H": {
+        "x": null,
+        "y": null,
+        "z": null
       }
     },
     "Final Geometry": {
@@ -68,30 +73,45 @@
         "x": "-2.04693",
         "y": "1.97726",
         "z": "4.17645"
+      },
+      "11 B": {
+        "x": null,
+        "y": null,
+        "z": null
+      },
+      "1 H": {
+        "x": null,
+        "y": null,
+        "z": null
       }
     },
     "Bond Lengths": {
       "('0 P', '1 C')": "1.85902",
+      "('1 C', '0 P')": "1.85902",
       "('1 C', '2 C')": "1.41487",
       "('3 H', '2 C')": "1.10258",
-      "('19 C', '18 H')": "2.17764"
+      "('19 C', '20 H')": "1.10156",
+      "('0 P', '20 H')": "5.07423",
+      "('19 C', '11 B')": null
     },
     "Bond Angles": {
       "('0 P', '1 C', '2 C')": "116.78352",
       "('3 H', '2 C', '1 C')": "119.50915",
-      "('1 C', '2 C', '3 H')": "119.50915"
+      "('1 C', '2 C', '3 H')": "119.50915",
+      "('0 P', '3 H', '18 H')": "59.45174",
+      "('1 C', '2 C', '11 B')": null
     },
     "Polarizability": {
-      "alpha_xx": "ERROR: polarizability data not found",
-      "alpha_xy": "ERROR: polarizability data not found",
-      "alpha_xz": "ERROR: polarizability data not found",
-      "alpha_yx": "ERROR: polarizability data not found",
-      "alpha_yy": "ERROR: polarizability data not found",
-      "alpha_yz": "ERROR: polarizability data not found",
-      "alpha_zx": "ERROR: polarizability data not found",
-      "alpha_zy": "ERROR: polarizability data not found",
-      "alpha_zz": "ERROR: polarizability data not found",
-      "alpha": "ERROR: polarizability data not found"
+      "alpha_xx": null,
+      "alpha_xy": null,
+      "alpha_xz": null,
+      "alpha_yx": null,
+      "alpha_yy": null,
+      "alpha_yz": null,
+      "alpha_zx": null,
+      "alpha_zy": null,
+      "alpha_zz": null,
+      "alpha": null
     },
     "Dipole Moments": {
       "X": "0.11095",
@@ -110,11 +130,14 @@
       "3 H": "0.005092",
       "19 C": "0.003536",
       "18 H": "0.005466",
-      "11 B": "ERROR: not found"
+      "11 B": null,
+      "1 H": null
     },
     "Mulliken Charge Sums": {
       "('0 P', '1 C', '18 H', '19 C', '2 C', '3 H')": "0.175208",
-      "('0 P',)": "0.303926"
+      "('0 P',)": "0.303926",
+      "('0 P', '3 H')": "0.30901799999999996",
+      "('0 P', '1 C', '11 B', '19 C', '2 C', '3 H')": null
     },
     "Loewdin Charges": {
       "0 P": "0.501961",
@@ -122,15 +145,19 @@
       "2 C": "-0.033359",
       "3 H": "0.031281",
       "19 C": "-0.031032",
-      "18 H": "0.033108"
+      "18 H": "0.033108",
+      "11 B": null,
+      "1 H": null
     },
     "Loewdin Charge Sums": {
-      "('0 P', '1 H', '18 H', '19 C', '2 H', '3 H')": "ERROR: 1 H not found in PPh3_opt.out (Loewdin Charges) during attempt to sum charges.",
-      "('0 P',)": "0.501961"
+      "('0 P', '1 C', '18 H', '19 C', '2 C', '3 H')": "0.3288380000000001",
+      "('0 P',)": "0.501961",
+      "('0 P', '3 H')": "0.533242",
+      "('0 P', '1 C', '11 B', '19 C', '2 C', '3 H')": null
     }
   },
   "PPh3_sp.out": {
-    "input filename": "PPh3_input.txt",
+    "input filename": "PPh3_test_input.txt",
     "Initial Geometry": {
       "0 P": {
         "x": "-1.97759",
@@ -163,9 +190,14 @@
         "z": "4.17645"
       },
       "11 B": {
-        "x": "ERROR: not found",
-        "y": "ERROR: not found",
-        "z": "ERROR: not found"
+        "x": null,
+        "y": null,
+        "z": null
+      },
+      "1 H": {
+        "x": null,
+        "y": null,
+        "z": null
       }
     },
     "Final Geometry": {
@@ -198,18 +230,33 @@
         "x": "-2.04693",
         "y": "1.97726",
         "z": "4.17645"
+      },
+      "11 B": {
+        "x": null,
+        "y": null,
+        "z": null
+      },
+      "1 H": {
+        "x": null,
+        "y": null,
+        "z": null
       }
     },
     "Bond Lengths": {
       "('0 P', '1 C')": "1.85902",
+      "('1 C', '0 P')": "1.85902",
       "('1 C', '2 C')": "1.41487",
       "('3 H', '2 C')": "1.10258",
-      "('19 C', '18 H')": "2.17764"
+      "('19 C', '20 H')": "1.10156",
+      "('0 P', '20 H')": "5.07423",
+      "('19 C', '11 B')": null
     },
     "Bond Angles": {
       "('0 P', '1 C', '2 C')": "116.78352",
       "('3 H', '2 C', '1 C')": "119.50915",
-      "('1 C', '2 C', '3 H')": "119.50915"
+      "('1 C', '2 C', '3 H')": "119.50915",
+      "('0 P', '3 H', '18 H')": "59.45174",
+      "('1 C', '2 C', '11 B')": null
     },
     "Polarizability": {
       "alpha_xx": "236.30256",
@@ -240,11 +287,14 @@
       "3 H": "-0.009731",
       "19 C": "0.019255",
       "18 H": "-0.010010",
-      "11 B": "ERROR: not found"
+      "11 B": null,
+      "1 H": null
     },
     "Mulliken Charge Sums": {
       "('0 P', '1 C', '18 H', '19 C', '2 C', '3 H')": "0.21779800000000005",
-      "('0 P',)": "0.365406"
+      "('0 P',)": "0.365406",
+      "('0 P', '3 H')": "0.355675",
+      "('0 P', '1 C', '11 B', '19 C', '2 C', '3 H')": null
     },
     "Loewdin Charges": {
       "0 P": "0.515077",
@@ -252,11 +302,15 @@
       "2 C": "-0.029704",
       "3 H": "0.026642",
       "19 C": "-0.027309",
-      "18 H": "0.028633"
+      "18 H": "0.028633",
+      "11 B": null,
+      "1 H": null
     },
     "Loewdin Charge Sums": {
-      "('0 P', '1 H', '18 H', '19 C', '2 H', '3 H')": "ERROR: 1 H not found in PPh3_sp.out (Loewdin Charges) during attempt to sum charges.",
-      "('0 P',)": "0.515077"
+      "('0 P', '1 C', '18 H', '19 C', '2 C', '3 H')": "0.338662",
+      "('0 P',)": "0.515077",
+      "('0 P', '3 H')": "0.5417190000000001",
+      "('0 P', '1 C', '11 B', '19 C', '2 C', '3 H')": null
     }
   }
 }
