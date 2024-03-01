@@ -112,11 +112,8 @@ class Polarizability(DataSection):
                     'alpha_zz': alpha_zz, 'alpha': alpha}
         except AttributeError:
             print(f'Polarizability data not found in {self._out_filename}.')
-            error_msg = 'ERROR: polarizability data not found'
-            # TODO: consider using NULL instead of an error message string?
-            # consider that this may cause problems when putting the data into excel? test it first, then do the replacement
-            return {'alpha_xx': error_msg, 'alpha_xy': error_msg,
-                    'alpha_xz': error_msg, 'alpha_yx': error_msg,
-                    'alpha_yy': error_msg, 'alpha_yz': error_msg,
-                    'alpha_zx': error_msg, 'alpha_zy': error_msg,
-                    'alpha_zz': error_msg, 'alpha': error_msg}
+            return {'alpha_xx': None, 'alpha_xy': None,
+                    'alpha_xz': None, 'alpha_yx': None,
+                    'alpha_yy': None, 'alpha_yz': None,
+                    'alpha_zx': None, 'alpha_zy': None,
+                    'alpha_zz': None, 'alpha': None}

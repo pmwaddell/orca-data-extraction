@@ -172,6 +172,6 @@ class FinalGeometry(DataSectionWithInputs):
         except AttributeError:
             print(f'Error: {atom_label} was not found'
                   f' in {self._out_filename} (Final Geometry).')
-            return {'x': self._std_error_msg,
-                    'y': self._std_error_msg,
-                    'z': self._std_error_msg}
+            return {'x': None,
+                    'y': None,
+                    'z': None}
