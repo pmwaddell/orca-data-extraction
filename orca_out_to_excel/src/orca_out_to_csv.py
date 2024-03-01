@@ -1,40 +1,19 @@
 import os
-import json
 import sys
+import pandas as pd
 from structure_data_builder import StructureDataBuilder
+from orca_out_to_json import make_json_dict
 
 
-def make_json_dict(sd_list):
-    json_dict = {}
-    for sd in sd_list:
-        sd_data = {'input filename': sd.get_input_filename()}
-        for data_section in sd.get_data_sections().values():
-            data_section_data = data_section.get_data()
-            json_safe_data = {}
-            # JSON is not compatible with tuples, so must convert to str
-            for key in data_section_data.keys():
-                val = data_section_data[key]
-                if type(val) == tuple:
-                    val = str(val)
-                if type(key) == tuple:
-                    json_safe_data[str(key)] = val
-                else:
-                    json_safe_data[key] = val
-
-            sd_data[data_section.get_section_name()] = json_safe_data
-        json_dict[sd.get_out_filename()] = sd_data
-    return json_dict
-
-
-def create_json_from_sds(sd_list, json_name):
+def create_csv_from_sds(sd_list, csv_name):
     json_dict = make_json_dict(sd_list)
-    with open(f'{json_name}.json', 'w') as f:
-        json.dump(json_dict, f, indent=2)
+    df = pd.json_normalize(json_dict)
+    df.to_csv(csv_name + '.csv')
 
 
 def main():
     # TODO: use an argument parser here instead? make argument inputs more sophisticated?
-    json_name = ''
+    csv_name = ''
     # process command line arguments
     # TODO: extract this part for each file type?? let the user select the file type @ command line?
     if len(sys.argv) >= 2:
@@ -43,7 +22,7 @@ def main():
             print('No file with name ' + inputs_name + ' found.')
             quit()
         if len(sys.argv) >= 3:
-            json_name = sys.argv[2]
+            csv_name = sys.argv[2]
     else:
         print('Script will execute on all .out files in the current '
               'working directory.')
@@ -59,15 +38,15 @@ def main():
             break
 
     # ask for excel file name
-    if json_name == '':
-        print('Name of the JSON file which will contain the data (press ENTER '
+    if csv_name == '':
+        print('Name of the CSV file which will contain the data (press ENTER '
               'to use the default name, "q" to quit): ', end='')
-        json_name = input()
-        if json_name == 'q':
+        csv_name = input()
+        if csv_name == 'q':
             quit()
         # If the user just hits enter, use default name:
-        if json_name == '':
-            json_name = f'ORCA_data_{inputs_name[:-4]}'
+        if csv_name == '':
+            csv_name = f'ORCA_data_{inputs_name[:-4]}'
 
     print('')
     sd_list = []
@@ -90,8 +69,8 @@ def main():
                     print(f'Something went wrong with {f} and it threw '
                           f'an IndexError...\n')
 
-    create_json_from_sds(sd_list, json_name)
-    print(f'Process complete! Results saved as "{json_name}.json"')
+    create_csv_from_sds(sd_list, csv_name)
+    print(f'Process complete! Results saved as "{csv_name}.csv"')
 
 
 if __name__ == '__main__':
