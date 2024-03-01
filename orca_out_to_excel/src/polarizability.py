@@ -76,6 +76,7 @@ class Polarizability(DataSection):
             flags=re.VERBOSE | re.DOTALL
         )
         super().__init__(out_filename, outfile_contents)
+        self._section_name = 'Polarizability'
 
     def _find_data(self):
         """
