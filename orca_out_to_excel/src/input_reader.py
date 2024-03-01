@@ -183,7 +183,8 @@ class InputReader:
         """
         Returns tuple of tuples of input parameters from a given line in input
         .txt file.
-        Used for lines that contain lists of labels: e.g. (P1,N5);(P1,O3) etc.
+        Used for lines that contain lists of labels:
+        e.g. (0 P,1 C);(2 H,3 B) etc.
 
         Parameters
         ----------
@@ -284,7 +285,7 @@ class InputReader:
         -------
         lst
             List of 'bond tuples' (i.e. tuples of two strings of atom labels,
-            e.g. ('P1', 'N5') for which bond length data will be searched or
+            e.g. ('0 P', '1 C') for which bond length data will be searched or
             calculated. These need to be tuples because they are hashed later.
         """
         return self.__read_inputs_lists(10)
@@ -301,7 +302,7 @@ class InputReader:
         -------
         lst
             List of 'angle tuples' (i.e. tuples of three strings of atom labels,
-            e.g. ('O3', 'Ni6', 'P2') for which bond angle data will be searched
+            e.g. ('0 P', '1 C', '2 C') for which bond angle data will be searched
             or calculated. These need to be tuples bc they are hashed later.
         """
         return self.__read_inputs_lists(13)
