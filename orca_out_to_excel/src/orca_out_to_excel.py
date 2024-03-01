@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 """
 A script to quickly pull desired data from an ORCA .out file and compile
-it into a spreadsheet.
+it into an Excel spreadsheet.
 
 Before running, the user should specify what information they want to look for
 in a .txt file (see example). When executed, the script checks each file in the
-working directory. If the file ends in .out, it creates an instance of the class
-StructureData associated with that file and the input .txt file. These are
-stored in a dictionary as values, with the corresponding .out filenames as keys.
-Then, the create_spreadsheet_all_out_files function iterates through all
-StructureData objects in this dictionary and exports the desired data into an
-excel spreadsheet.
+working directory. If the file ends in .out, it exports the desired data into
+an excel spreadsheet.
 """
 __author__ = "Peter Waddell"
 __copyright__ = "Copyright 2024"
@@ -27,16 +23,16 @@ from structure_data_builder import StructureDataBuilder
 from xlwt import Workbook
 
 
-def create_spreadsheet_all_out_files(sd_dict, excel_name):
+def create_excel_from_sds(sd_list, excel_name):
     """
     Uses Workbook to create an excel file and populate the first sheet with the
     desired set of data from the ORCA .out files in the directory, which
-    are passed in the form of the dictionary sd_dict.
+    are passed in the form of the dictionary sd_list.
 
     Parameters
     ----------
-    sd_dict : dict
-        Dictionary containing the set of StructureData instances that each come
+    sd_list : list
+        List containing the set of StructureData instances that each come
         from the ORCA .out files.
     excel_name : str
         Desired name of the excel file that will store the data.
@@ -56,7 +52,7 @@ def create_spreadsheet_all_out_files(sd_dict, excel_name):
             of a Workbook.
         current_count : int
             The value of count from the enumerate of the for loop that iterates
-            through all the instances of StructureData objects in sd_dict. It is
+            through all the instances of StructureData objects in sd_list. It is
             really only used for when it is 0, which indicates that column
             headers should be written in to the excel sheet.
         """
@@ -132,7 +128,7 @@ def create_spreadsheet_all_out_files(sd_dict, excel_name):
     wb = Workbook()
     sheet1 = wb.add_sheet('Sheet 1')
     row = 2
-    for count, sd in enumerate(sd_dict.values()):
+    for count, sd in enumerate(sd_list):
         write_sd_to_excel(sd, sheet1, count)
         row += 1
     wb.save(f'{excel_name}.xls')
@@ -150,9 +146,10 @@ def main():
         if len(sys.argv) >= 3:
             excel_name = sys.argv[2]
     else:
+        print('Script will execute on all .out files in the current '
+              'working directory.')
         while True:
-            print('Script will execute on all .out files in the current '
-                  'working directory.')
+
             print('Name of input file with atom labels ("q" to quit): ',
                   end='')
             inputs_name = input()
@@ -165,7 +162,7 @@ def main():
 
     # ask for excel file name
     if excel_name == '':
-        print('Name of the excel file which will contain the data (press ENTER '
+        print('Name of the Excel file which will contain the data (press ENTER '
               'to use the default name, "q" to quit): ', end='')
         excel_name = input()
         if excel_name == 'q':
@@ -175,7 +172,7 @@ def main():
             excel_name = f'ORCA_data_{inputs_name[:-4]}'
 
     print('')
-    sd_dict = {}
+    sd_list = []
     structure_data_builder = StructureDataBuilder(inputs_name)
     for f in os.listdir(os.getcwd()):
         if os.path.isfile(f):
@@ -189,13 +186,13 @@ def main():
             if filename_end == '.out':
                 try:
                     print(f'Beginning search: {f}')
-                    sd_dict[f] = structure_data_builder.build(f)
+                    sd_list.append(structure_data_builder.build(f))
                     print(f'{f} complete.\n')
                 except IndexError:
                     print(f'Something went wrong with {f} and it threw '
                           f'an IndexError...\n')
 
-    create_spreadsheet_all_out_files(sd_dict, excel_name)
+    create_excel_from_sds(sd_list, excel_name)
     print(f'Process complete! Results saved as "{excel_name}.xls"')
 
 

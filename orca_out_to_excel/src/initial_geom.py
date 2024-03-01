@@ -37,8 +37,8 @@ class InitialGeometry(DataSectionWithInputs):
             Tuple of atom labels (e.g. '2 H') for which input geometry data
             will be searched.
         """
-        self._section_name = 'Initial Geometry'
         super().__init__(out_filename, outfile_contents, inputs)
+        self._section_name = 'Initial Geometry'
 
     def _search(self, atom_label):
         """
