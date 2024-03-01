@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 """
 A script to quickly pull desired data from an ORCA .out file and compile
-it into a spreadsheet.
+it into an Excel spreadsheet.
 
 Before running, the user should specify what information they want to look for
 in a .txt file (see example). When executed, the script checks each file in the
-working directory. If the file ends in .out, it creates an instance of the class
-StructureData associated with that file and the input .txt file. These are
-stored in a dictionary as values, with the corresponding .out filenames as keys.
-Then, the create_spreadsheet_all_out_files function iterates through all
-StructureData objects in this dictionary and exports the desired data into an
-excel spreadsheet.
+working directory. If the file ends in .out, it exports the desired data into
+an excel spreadsheet.
 """
 __author__ = "Peter Waddell"
 __copyright__ = "Copyright 2024"

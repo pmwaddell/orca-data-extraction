@@ -1,3 +1,22 @@
+#!/usr/bin/env python3
+"""
+A script to quickly pull desired data from an ORCA .out file and compile
+it into a CSV file.
+
+Before running, the user should specify what information they want to look for
+in a .txt file (see example). When executed, the script checks each file in the
+working directory. If the file ends in .out, it exports the desired data into
+a CSV file.
+"""
+__author__ = "Peter Waddell"
+__copyright__ = "Copyright 2024"
+__credits__ = ["Peter Waddell"]
+__version__ = "0.1.0"
+__date__ = "2024/03/01"
+__maintainer__ = "Peter Waddell"
+__email__ = "pmwaddell9@gmail.com"
+__status__ = "Prototype"
+
 import os
 import sys
 import pandas as pd
@@ -6,6 +25,17 @@ from orca_out_to_json import make_json_dict
 
 
 def create_csv_from_sds(sd_list, csv_name):
+    """
+    Writes the data in a list of StructureData instances to a CSV file.
+
+    Parameters
+    ----------
+    sd_list : list
+        List containing the set of StructureData instances that each come
+        from the ORCA .out files.
+    csv_name : str
+        Name of the CSV file where the data will be stored.
+    """
     json_dict = make_json_dict(sd_list)
     df = pd.json_normalize(json_dict)
     df.to_csv(csv_name + '.csv')

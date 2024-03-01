@@ -1,3 +1,22 @@
+#!/usr/bin/env python3
+"""
+A script to quickly pull desired data from an ORCA .out file and compile
+it into a JSON file.
+
+Before running, the user should specify what information they want to look for
+in a .txt file (see example). When executed, the script checks each file in the
+working directory. If the file ends in .out, it exports the desired data into
+a JSON file.
+"""
+__author__ = "Peter Waddell"
+__copyright__ = "Copyright 2024"
+__credits__ = ["Peter Waddell"]
+__version__ = "0.1.0"
+__date__ = "2024/03/01"
+__maintainer__ = "Peter Waddell"
+__email__ = "pmwaddell9@gmail.com"
+__status__ = "Prototype"
+
 import os
 import json
 import sys
@@ -5,6 +24,21 @@ from structure_data_builder import StructureDataBuilder
 
 
 def make_json_dict(sd_list):
+    """
+    Converts the data in a list of StructureData instances to a dict for JSON.
+
+    Parameters
+    ----------
+    sd_list : list
+        List containing the set of StructureData instances that each come
+        from the ORCA .out files.
+
+    Returns
+    -------
+    dict
+        Dictionary with the data from sd_list configured to be compatible with
+        JSON (i.e., tuples are converted to strings).
+    """
     json_dict = {}
     for sd in sd_list:
         sd_data = {'input filename': sd.get_input_filename()}
@@ -27,6 +61,17 @@ def make_json_dict(sd_list):
 
 
 def create_json_from_sds(sd_list, json_name):
+    """
+    Writes the data in a list of StructureData instances to a JSON file.
+
+    Parameters
+    ----------
+    sd_list : list
+        List containing the set of StructureData instances that each come
+        from the ORCA .out files.
+    json_name : str
+        Name of the JSON file where the data will be stored.
+    """
     json_dict = make_json_dict(sd_list)
     with open(f'{json_name}.json', 'w') as f:
         json.dump(json_dict, f, indent=2)
