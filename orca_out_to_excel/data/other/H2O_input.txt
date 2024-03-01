@@ -1,0 +1,26 @@
+Labels should appear on the line below the prompt and be separated with commas, e.g. 1 H,0 O,2 H,...
+Leave the line below a category blank to skip it. DO NOT ADD OR REMOVE ANY LINES! or the script will not work
+
+Initial geometry atom labels (e.g. 0 O,1 H,2 H):
+0 O,1 H,2 H
+
+Final geometry atom labels (e.g. 0 O,1 H,2 H):
+0 O,1 H,2 H
+
+Bond length data labels (e.g. (1 H,0 O);(0 O,2 H)):
+(1 H,0 O);(0 O,2 H)
+
+Bond angle data labels (e.g. (1 H,0 O,2 H);(2 H,0 O,1 H))
+(1 H,0 O,2 H);(2 H,0 O,1 H)
+
+Mulliken charge atom labels (e.g. 0 O,1 H,2 H)
+0 O,1 H,2 H
+
+Mulliken charge SUM atom label lists (e.g. (1 H,0 O,2 H);(2 H,1 H);(0 O)):
+(1 H,0 O,2 H);(2 H,1 H);(0 O)
+
+Loewdin charge atom labels (e.g. 0 O,1 H,2 H)
+0 O,1 H,2 H
+
+Loewdin charge SUM atom label lists (e.g. (1 H,0 O,2 H);(2 H,1 H);(0 O)):
+(1 H,0 O,2 H);(2 H,1 H);(0 O)

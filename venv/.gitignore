@@ -1,0 +1,5 @@
+# created by virtualenv automatically
+
+# Potentially sensitive data files
+*.out
+*.xls
