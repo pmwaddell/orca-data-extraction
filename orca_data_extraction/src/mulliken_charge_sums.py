@@ -80,7 +80,7 @@ class MullikenChargeSums(DataSectionWithInputs):
                       f'({mulliken_charges.get_section_name()}) during attempt '
                       f'to sum charges.')
                 return None
-        return str(charge_sum)
+        return str(round(charge_sum, 5))
 
     def get_datum(self, atoms_tuple):
         """
