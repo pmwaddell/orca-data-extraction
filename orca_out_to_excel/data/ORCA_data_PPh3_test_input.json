@@ -1,6 +1,7 @@
-{
-  "PPh3_opt.out": {
-    "input filename": "PPh3_test_input.txt",
+[
+  {
+    "Input Filename": "PPh3_test_input.txt",
+    "ORCA .out Filename": "PPh3_opt.out",
     "Initial Geometry": {
       "0 P": {
         "x": "-1.89823",
@@ -156,8 +157,9 @@
       "('0 P', '1 C', '11 B', '19 C', '2 C', '3 H')": null
     }
   },
-  "PPh3_sp.out": {
-    "input filename": "PPh3_test_input.txt",
+  {
+    "Input Filename": "PPh3_test_input.txt",
+    "ORCA .out Filename": "PPh3_sp.out",
     "Initial Geometry": {
       "0 P": {
         "x": "-1.97759",
@@ -313,4 +315,4 @@
       "('0 P', '1 C', '11 B', '19 C', '2 C', '3 H')": null
     }
   }
-}
+]

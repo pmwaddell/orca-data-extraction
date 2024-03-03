@@ -23,7 +23,7 @@ import sys
 from structure_data_builder import StructureDataBuilder
 
 
-def make_json_dict(sd_list):
+def make_json_list(sd_list):
     """
     Converts the data in a list of StructureData instances to a dict for JSON.
 
@@ -35,13 +35,17 @@ def make_json_dict(sd_list):
 
     Returns
     -------
-    dict
-        Dictionary with the data from sd_list configured to be compatible with
+    list
+        List with the data from sd_list configured to be compatible with
         JSON (i.e., tuples are converted to strings).
     """
-    json_dict = {}
+    # TODO: new approach: list of dicts, each dict represents one SD
+    # and represents one row of data
+    # and has all the fields, including name and whatnot
+    json_lst = []
     for sd in sd_list:
-        sd_data = {'input filename': sd.get_input_filename()}
+        sd_data = {'Input Filename': sd.get_input_filename(),
+                   'ORCA .out Filename': sd.get_out_filename()}
         for data_section in sd.get_data_sections().values():
             data_section_data = data_section.get_data()
             json_safe_data = {}
@@ -54,10 +58,9 @@ def make_json_dict(sd_list):
                     json_safe_data[str(key)] = val
                 else:
                     json_safe_data[key] = val
-
             sd_data[data_section.get_section_name()] = json_safe_data
-        json_dict[sd.get_out_filename()] = sd_data
-    return json_dict
+        json_lst.append(sd_data)
+    return json_lst
 
 
 def create_json_from_sds(sd_list, json_name):
@@ -72,9 +75,9 @@ def create_json_from_sds(sd_list, json_name):
     json_name : str
         Name of the JSON file where the data will be stored.
     """
-    json_dict = make_json_dict(sd_list)
+    json_list = make_json_list(sd_list)
     with open(f'{json_name}.json', 'w') as f:
-        json.dump(json_dict, f, indent=2)
+        json.dump(json_list, f, indent=2)
 
 
 def main():

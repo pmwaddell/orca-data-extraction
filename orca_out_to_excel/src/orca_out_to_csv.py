@@ -21,7 +21,7 @@ import os
 import sys
 import pandas as pd
 from structure_data_builder import StructureDataBuilder
-from orca_out_to_json import make_json_dict
+from orca_out_to_json import make_json_list
 
 
 def create_csv_from_sds(sd_list, csv_name):
@@ -36,8 +36,8 @@ def create_csv_from_sds(sd_list, csv_name):
     csv_name : str
         Name of the CSV file where the data will be stored.
     """
-    json_dict = make_json_dict(sd_list)
-    df = pd.json_normalize(json_dict)
+    json_list = make_json_list(sd_list)
+    df = pd.json_normalize(json_list)
     df.to_csv(csv_name + '.csv')
 
 
