@@ -39,12 +39,9 @@ def make_json_list(sd_list):
         List with the data from sd_list configured to be compatible with
         JSON (i.e., tuples are converted to strings).
     """
-    # TODO: new approach: list of dicts, each dict represents one SD
-    # and represents one row of data
-    # and has all the fields, including name and whatnot
     json_lst = []
     for sd in sd_list:
-        sd_data = {'Input Filename': sd.get_input_filename(),
+        sd_data = {'Script Input Filename': sd.get_input_filename(),
                    'ORCA .out Filename': sd.get_out_filename()}
         for data_section in sd.get_data_sections().values():
             data_section_data = data_section.get_data()
