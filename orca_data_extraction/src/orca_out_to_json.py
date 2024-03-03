@@ -39,23 +39,38 @@ def make_json_list(sd_list):
         List with the data from sd_list configured to be compatible with
         JSON (i.e., tuples are converted to strings).
     """
+    def format_names(x):
+        if type(x) != str:
+            return x
+        else:
+            return x\
+                .replace("'", "")\
+                .replace(', ', ',')\
+                .replace(' ', '_')\
+                .lower()
+
     json_lst = []
     for sd in sd_list:
-        sd_data = {'Script Input Filename': sd.get_input_filename(),
-                   'ORCA .out Filename': sd.get_out_filename()}
+        sd_data = {
+            'script_input_filename': sd.get_input_filename(),
+            'orca_out_filename': sd.get_out_filename()
+        }
         for data_section in sd.get_data_sections().values():
             data_section_data = data_section.get_data()
             json_safe_data = {}
             # JSON is not compatible with tuples, so must convert to str
             for key in data_section_data.keys():
                 val = data_section_data[key]
+                key_to_add, val_to_add = key, val
                 if type(val) == tuple:
-                    val = str(val)
+                    val_to_add = str(val)
                 if type(key) == tuple:
-                    json_safe_data[str(key)] = val
-                else:
-                    json_safe_data[key] = val
-            sd_data[data_section.get_section_name()] = json_safe_data
+                    key_to_add = str(key)
+                json_safe_data[format_names(key_to_add)] = \
+                    format_names(val_to_add)
+            sd_data[
+                data_section.get_section_name().replace(' ', '_').lower()
+            ] = json_safe_data
         json_lst.append(sd_data)
     return json_lst
 
@@ -141,4 +156,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
