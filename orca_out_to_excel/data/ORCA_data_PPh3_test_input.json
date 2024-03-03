@@ -1,6 +1,6 @@
 [
   {
-    "Input Filename": "PPh3_test_input.txt",
+    "Script Input Filename": "PPh3_test_input.txt",
     "ORCA .out Filename": "PPh3_opt.out",
     "Initial Geometry": {
       "0 P": {
@@ -158,7 +158,7 @@
     }
   },
   {
-    "Input Filename": "PPh3_test_input.txt",
+    "Script Input Filename": "PPh3_test_input.txt",
     "ORCA .out Filename": "PPh3_sp.out",
     "Initial Geometry": {
       "0 P": {
