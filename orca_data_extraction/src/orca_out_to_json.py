@@ -39,7 +39,21 @@ def make_json_list(sd_list):
         List with the data from sd_list configured to be compatible with
         JSON (i.e., tuples are converted to strings).
     """
-    def format_names(x):
+    def format_column_name(x):
+        """
+        Format string for use as a column name in the JSON file.
+
+        Parameters
+        ----------
+        x : str or other
+            Entity to be potentially renamed.
+
+        Returns
+        -------
+        str or other
+            A string formatted for use as column name in the JSON file, or returns
+            the object unchanged if it is not a string (e.g., a dict).
+        """
         if type(x) != str:
             return x
         else:
@@ -66,8 +80,8 @@ def make_json_list(sd_list):
                     val_to_add = str(val)
                 if type(key) == tuple:
                     key_to_add = str(key)
-                json_safe_data[format_names(key_to_add)] = \
-                    format_names(val_to_add)
+                json_safe_data[format_column_name(key_to_add)] = \
+                    format_column_name(val_to_add)
             sd_data[
                 data_section.get_section_name().replace(' ', '_').lower()
             ] = json_safe_data
