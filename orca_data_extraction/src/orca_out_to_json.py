@@ -109,7 +109,7 @@ def create_json_from_sds(sd_list, json_name):
 def main():
     # TODO: use an argument parser here instead? make argument inputs more sophisticated?
     json_name = ''
-    # process command line arguments
+    # Process command line arguments
     # TODO: extract this part for each file type?? let the user select the file type @ command line?
     if len(sys.argv) >= 2:
         inputs_name = sys.argv[1]
@@ -132,7 +132,7 @@ def main():
                 continue
             break
 
-    # ask for excel file name
+    # Ask for excel file name
     if json_name == '':
         print('Name of the JSON file which will contain the data (press ENTER '
               'to use the default name, "q" to quit): ', end='')

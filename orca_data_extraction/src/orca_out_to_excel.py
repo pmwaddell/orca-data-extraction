@@ -137,7 +137,7 @@ def create_excel_from_sds(sd_list, excel_name):
 def main():
     # TODO: use an argument parser here instead? make argument inputs more sophisticated?
     excel_name = ''
-    # process command line arguments
+    # Process command line arguments
     if len(sys.argv) >= 2:
         inputs_name = sys.argv[1]
         if not os.path.isfile(inputs_name):
@@ -160,7 +160,7 @@ def main():
                 continue
             break
 
-    # ask for excel file name
+    # Ask for excel file name
     if excel_name == '':
         print('Name of the Excel file which will contain the data (press ENTER '
               'to use the default name, "q" to quit): ', end='')
