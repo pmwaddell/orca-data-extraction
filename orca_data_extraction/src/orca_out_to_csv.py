@@ -44,7 +44,7 @@ def create_csv_from_sds(sd_list, csv_name):
 def main():
     # TODO: use an argument parser here instead? make argument inputs more sophisticated?
     csv_name = ''
-    # process command line arguments
+    # Process command line arguments
     # TODO: extract this part for each file type?? let the user select the file type @ command line?
     if len(sys.argv) >= 2:
         inputs_name = sys.argv[1]
@@ -67,7 +67,7 @@ def main():
                 continue
             break
 
-    # ask for excel file name
+    # Ask for excel file name
     if csv_name == '':
         print('Name of the CSV file which will contain the data (press ENTER '
               'to use the default name, "q" to quit): ', end='')
