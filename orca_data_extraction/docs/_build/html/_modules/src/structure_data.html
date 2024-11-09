@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.structure_data &#8212; orca-data-extraction 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.structure_data</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Provides the StructureData class for use with other scripts.</span>
+
+<span class="sd">The StructureData class holds information from an ORCA .out file,</span>
+<span class="sd">as specified by an input .txt file. It holds these data in a dictionary</span>
+<span class="sd">with the names of data sections as keys and corresponding DataSection</span>
+<span class="sd">subclasses as values. It contains methods to get data from these sections.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2024&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Peter Waddell&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;2024/02/27&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;pmwaddell9@gmail.com&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Prototype&quot;</span>
+
+
+<div class="viewcode-block" id="StructureData">
+<a class="viewcode-back" href="../../src.html#src.structure_data.StructureData">[docs]</a>
+<span class="k">class</span> <span class="nc">StructureData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Associates a desired subset of data from an ORCA .out file.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    __out_filename : str</span>
+<span class="sd">        String of the filename of the ORCA .out file this object</span>
+<span class="sd">        represents.</span>
+<span class="sd">    __input_filename : str</span>
+<span class="sd">        String of filename of .txt file that contains lists of desired atom</span>
+<span class="sd">        labels for each type of data that will be pulled from the .out file.</span>
+<span class="sd">    __data_sections : dict</span>
+<span class="sd">        Dictionary mapping strings of the names of DataSection subclasses to</span>
+<span class="sd">        instances those subclasses associated with this .out file.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __read_file</span>
+<span class="sd">        Converts a text file to a single string using .read().</span>
+<span class="sd">    __check_coord_system</span>
+<span class="sd">        Determines whether the coordinate system was set up correctly.</span>
+<span class="sd">    get_out_filename</span>
+<span class="sd">        Gives the filename of the .out file from which the data was taken.</span>
+<span class="sd">    get_input_filename</span>
+<span class="sd">        Gives the filename of the input .txt file.</span>
+<span class="sd">    get_std_error_msg</span>
+<span class="sd">        Gives the standard error message used by this class.</span>
+<span class="sd">    get_data_sections</span>
+<span class="sd">        Gives __data_sections attribute, a dictionary that maps names of</span>
+<span class="sd">        DataSection subclasses to their corresponding instances.</span>
+<span class="sd">    get_data_section</span>
+<span class="sd">        Gives a DataSection subclass (value) from the __data_sections dict</span>
+<span class="sd">        given its name (key).</span>
+<span class="sd">    get_data_section_data</span>
+<span class="sd">        Gives dict containing the data from a particular DataSection subclass</span>
+<span class="sd">        instance.</span>
+<span class="sd">    get_data_section_datum</span>
+<span class="sd">        Gives &#39;datum&#39; (value from DataSection subclass data dictionary)</span>
+<span class="sd">        corresponding to a given label (key for said dict).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Class attributes.</span>
+    <span class="n">__std_error_msg</span> <span class="o">=</span> <span class="s1">&#39;ERROR: not found&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">,</span> <span class="n">input_filename</span><span class="p">,</span> <span class="n">data_sections</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            out_filename : str</span>
+<span class="sd">                String of filename of .out file this object represents.</span>
+<span class="sd">            input_filename : str</span>
+<span class="sd">                String of filename of .txt file that contains lists of desired</span>
+<span class="sd">                atom labels for each type of data that will be pulled from the</span>
+<span class="sd">                .out file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__out_filename</span> <span class="o">=</span> <span class="n">out_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__input_filename</span> <span class="o">=</span> <span class="n">input_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__data_sections</span> <span class="o">=</span> <span class="n">data_sections</span>
+
+<div class="viewcode-block" id="StructureData.get_out_filename">
+<a class="viewcode-back" href="../../src.html#src.structure_data.StructureData.get_out_filename">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_out_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gives the filename of the .out file from which the data was taken.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            __out_filename attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__out_filename</span></div>
+
+
+<div class="viewcode-block" id="StructureData.get_input_filename">
+<a class="viewcode-back" href="../../src.html#src.structure_data.StructureData.get_input_filename">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_input_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gives the filename of the input .txt file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            __input_filename attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__input_filename</span></div>
+
+
+    <span class="c1"># Results/data:</span>
+<div class="viewcode-block" id="StructureData.get_std_error_msg">
+<a class="viewcode-back" href="../../src.html#src.structure_data.StructureData.get_std_error_msg">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_std_error_msg</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gives the standard error message used by this class.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            __std_error_msg attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">StructureData</span><span class="o">.</span><span class="n">__std_error_msg</span></div>
+
+
+<div class="viewcode-block" id="StructureData.get_data_sections">
+<a class="viewcode-back" href="../../src.html#src.structure_data.StructureData.get_data_sections">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_data_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gives __data_sections attribute, a dictionary that maps names of</span>
+<span class="sd">        DataSection subclasses to their corresponding instances.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            __data_sections attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data_sections</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="StructureData.get_data_section">
+<a class="viewcode-back" href="../../src.html#src.structure_data.StructureData.get_data_section">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_data_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gives a DataSection subclass (value) from the __data_sections dict</span>
+<span class="sd">        given its name (key).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        section_name : str</span>
+<span class="sd">            Name of a DataSection subclass.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataSection subclass</span>
+<span class="sd">            Instance of a DataSection subclass corresponding to the passed name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data_sections</span><span class="p">[</span><span class="n">section_name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;ERROR: Data section </span><span class="si">{</span><span class="n">section_name</span><span class="si">}</span><span class="s1"> not found in &#39;</span> \
+                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">()</span><span class="si">}</span><span class="s1"> (input .txt file).&#39;</span></div>
+
+
+<div class="viewcode-block" id="StructureData.get_data_section_data">
+<a class="viewcode-back" href="../../src.html#src.structure_data.StructureData.get_data_section_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_data_section_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gives dict containing the data from a particular DataSection subclass</span>
+<span class="sd">        instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        section_name : str</span>
+<span class="sd">            Name of the DataSection, should be a key in __data_sections</span>
+<span class="sd">            attribute.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Data found by a DataSection subclass instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_section</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;ERROR: Data section </span><span class="si">{</span><span class="n">section_name</span><span class="si">}</span><span class="s1"> not found in &#39;</span> \
+                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">()</span><span class="si">}</span><span class="s1"> (input .txt file).&#39;</span></div>
+
+
+<div class="viewcode-block" id="StructureData.get_data_section_datum">
+<a class="viewcode-back" href="../../src.html#src.structure_data.StructureData.get_data_section_datum">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_data_section_datum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section_name</span><span class="p">,</span> <span class="n">datum_label</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gives &#39;datum&#39; (value from DataSection subclass data dictionary)</span>
+<span class="sd">        corresponding to a given label (key for said dict).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        section_name : str</span>
+<span class="sd">            Name of the DataSection, should be a key in __data_sections</span>
+<span class="sd">            attribute.</span>
+<span class="sd">        datum_label : str or tuple</span>
+<span class="sd">            Key to the DataSection subclass data dictionary for the desired</span>
+<span class="sd">            datum.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or dict</span>
+<span class="sd">            &#39;Datum&#39; corresponding to the datum label key in the DataSection</span>
+<span class="sd">            data dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_section</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_datum</span><span class="p">(</span><span class="n">datum_label</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;ERROR: Data section </span><span class="si">{</span><span class="n">section_name</span><span class="si">}</span><span class="s1"> not found in &#39;</span> \
+                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">()</span><span class="si">}</span><span class="s1"> (input .txt file).&#39;</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">orca-data-extraction</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Peter Waddell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -17,7 +17,8 @@ __email__ = "pmwaddell9@gmail.com"
 __status__ = "Prototype"
 
 from abc import ABC, abstractmethod
-from data_section import DataSection
+
+from orca_data_extraction.src.data_section import DataSection
 
 
 class DataSectionWithInputs(DataSection, ABC):

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.orca_out_to_excel &#8212; orca-data-extraction 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.orca_out_to_excel</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A script to quickly pull desired data from an ORCA .out file and compile</span>
+<span class="sd">it into an Excel spreadsheet.</span>
+
+<span class="sd">Before running, the user should specify what information they want to look for</span>
+<span class="sd">in a .txt file (see example). When executed, the script checks each file in the</span>
+<span class="sd">working directory. If the file ends in .out, it exports the desired data into</span>
+<span class="sd">an excel spreadsheet.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2024&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Peter Waddell&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;2024/02/28&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;pmwaddell9@gmail.com&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Prototype&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">orca_data_extraction.src.structure_data_builder</span> <span class="kn">import</span> <span class="n">StructureDataBuilder</span>
+<span class="kn">from</span> <span class="nn">xlwt</span> <span class="kn">import</span> <span class="n">Workbook</span>
+
+
+<div class="viewcode-block" id="create_excel_from_sds">
+<a class="viewcode-back" href="../../src.html#src.orca_out_to_excel.create_excel_from_sds">[docs]</a>
+<span class="k">def</span> <span class="nf">create_excel_from_sds</span><span class="p">(</span><span class="n">sd_list</span><span class="p">,</span> <span class="n">excel_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses Workbook to create an excel file and populate the first sheet with the</span>
+<span class="sd">    desired set of data from the ORCA .out files in the directory, which</span>
+<span class="sd">    are passed in the form of the dictionary sd_list.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sd_list : list</span>
+<span class="sd">        List containing the set of StructureData instances that each come</span>
+<span class="sd">        from the ORCA .out files.</span>
+<span class="sd">    excel_name : str</span>
+<span class="sd">        Desired name of the excel file that will store the data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">write_sd_to_excel</span><span class="p">(</span><span class="n">current_sd</span><span class="p">,</span> <span class="n">current_sheet</span><span class="p">,</span> <span class="n">current_count</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the data from an instance of StructureData into the desired sheet</span>
+<span class="sd">        of the Workbook instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        current_sd : object (StructureData)</span>
+<span class="sd">            The instance of StructureData whose information is being used to</span>
+<span class="sd">            write to excel for this function call.</span>
+<span class="sd">        current_sheet : object</span>
+<span class="sd">            The sheet object that will be written to, from a particular instance</span>
+<span class="sd">            of a Workbook.</span>
+<span class="sd">        current_count : int</span>
+<span class="sd">            The value of count from the enumerate of the for loop that iterates</span>
+<span class="sd">            through all the instances of StructureData objects in sd_list. It is</span>
+<span class="sd">            really only used for when it is 0, which indicates that column</span>
+<span class="sd">            headers should be written in to the excel sheet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">write_datum_to_excel</span><span class="p">(</span><span class="n">datum_label</span><span class="p">,</span> <span class="n">datum</span><span class="p">,</span> <span class="n">sheet</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Writes a piece of data (&#39;datum&#39;) from a DataSection instance into</span>
+<span class="sd">            the excel spreadsheet.</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            datum_label : str</span>
+<span class="sd">                String describing the piece of data to be written into excel.</span>
+
+<span class="sd">            datum : str or dict</span>
+<span class="sd">                This variable contains the information that will be written into</span>
+<span class="sd">                the excel file, either as an individual string of a number</span>
+<span class="sd">                (e.g. for a bond length) or a dictionary containing several</span>
+<span class="sd">                associated values for a particular atom (e.g. for input</span>
+<span class="sd">                coordinates data).</span>
+
+<span class="sd">            sheet : object</span>
+<span class="sd">                Sheet from the workbook instance (from xlwt) to which the data</span>
+<span class="sd">                is written.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Depending on the data section, data will be either a dictionary</span>
+            <span class="c1"># or a string of a numerical value, so these cases are handled</span>
+            <span class="c1"># separately.</span>
+            <span class="k">nonlocal</span> <span class="n">column</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">datum</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">datum</span><span class="p">:</span>
+                    <span class="c1"># Add atom labels in the top row, only the first time:</span>
+                    <span class="k">if</span> <span class="n">current_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">sheet</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">datum_label</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">elem</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">sheet</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">datum</span><span class="p">[</span><span class="n">elem</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">column</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">current_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">sheet</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">datum_label</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">sheet</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">datum</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">column</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">def</span> <span class="nf">write_data_section</span><span class="p">(</span><span class="n">column_title</span><span class="p">,</span> <span class="n">section_data</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Writes the data from a particular DataSection into the spreadsheet.</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            column_title : str</span>
+<span class="sd">                Name of the data section, which will be the title of the column</span>
+<span class="sd">                in the excel spreadsheet.</span>
+<span class="sd">            section_data : str or dict</span>
+<span class="sd">                Data to be written to excel for the data section, either in the</span>
+<span class="sd">                form of a single str or a dict mapping str to str, depending on</span>
+<span class="sd">                how the data is structured.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Add column titles in the top row, only the first time:</span>
+            <span class="k">if</span> <span class="n">current_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">current_sheet</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">column_title</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">datum_label</span> <span class="ow">in</span> <span class="n">section_data</span><span class="p">:</span>
+                <span class="n">write_datum_to_excel</span><span class="p">(</span><span class="n">datum_label</span><span class="p">,</span> <span class="n">section_data</span><span class="p">[</span><span class="n">datum_label</span><span class="p">],</span>
+                                     <span class="n">current_sheet</span><span class="p">)</span>
+
+        <span class="n">column</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1"># Add .out filename to spreadsheet.</span>
+        <span class="n">current_sheet</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">current_sd</span><span class="o">.</span><span class="n">get_out_filename</span><span class="p">())</span>
+
+        <span class="n">current_data_sections</span> <span class="o">=</span> <span class="n">current_sd</span><span class="o">.</span><span class="n">get_data_sections</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">data_section_name</span> <span class="ow">in</span> <span class="n">current_data_sections</span><span class="p">:</span>
+            <span class="n">write_data_section</span><span class="p">(</span>
+                <span class="n">data_section_name</span><span class="p">,</span>
+                <span class="n">current_sd</span><span class="o">.</span><span class="n">get_data_section</span><span class="p">(</span><span class="n">data_section_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+
+    <span class="n">wb</span> <span class="o">=</span> <span class="n">Workbook</span><span class="p">()</span>
+    <span class="n">sheet1</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">add_sheet</span><span class="p">(</span><span class="s1">&#39;Sheet 1&#39;</span><span class="p">)</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">sd</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sd_list</span><span class="p">):</span>
+        <span class="n">write_sd_to_excel</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="n">sheet1</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+        <span class="n">row</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">wb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">excel_name</span><span class="si">}</span><span class="s1">.xls&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../src.html#src.orca_out_to_excel.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># TODO: use an argument parser here instead? make argument inputs more sophisticated?</span>
+    <span class="n">excel_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="c1"># Process command line arguments</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">inputs_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inputs_name</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No file with name &#39;</span> <span class="o">+</span> <span class="n">inputs_name</span> <span class="o">+</span> <span class="s1">&#39; found.&#39;</span><span class="p">)</span>
+            <span class="n">quit</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">excel_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Script will execute on all .out files in the current &#39;</span>
+              <span class="s1">&#39;working directory.&#39;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Name of input file with atom labels (&quot;q&quot; to quit): &#39;</span><span class="p">,</span>
+                  <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">inputs_name</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">inputs_name</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span>
+                <span class="n">quit</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">inputs_name</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No file with name &#39;</span> <span class="o">+</span> <span class="n">inputs_name</span> <span class="o">+</span> <span class="s1">&#39; found.&#39;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">break</span>
+
+    <span class="c1"># Ask for excel file name</span>
+    <span class="k">if</span> <span class="n">excel_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Name of the Excel file which will contain the data (press ENTER &#39;</span>
+              <span class="s1">&#39;to use the default name, &quot;q&quot; to quit): &#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">excel_name</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">excel_name</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span>
+            <span class="n">quit</span><span class="p">()</span>
+        <span class="c1"># If the user just hits enter, use default name:</span>
+        <span class="k">if</span> <span class="n">excel_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">excel_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;ORCA_data_</span><span class="si">{</span><span class="n">inputs_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">sd_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">structure_data_builder</span> <span class="o">=</span> <span class="n">StructureDataBuilder</span><span class="p">(</span><span class="n">inputs_name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">filename_end</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="c1"># Since it is hard for filenames to be shorter than 4 chars</span>
+                <span class="c1"># I think it is unlikely this error would ever be raised...</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1">: Invalid filename&#39;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">filename_end</span> <span class="o">==</span> <span class="s1">&#39;.out&#39;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Beginning search: </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">sd_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structure_data_builder</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1"> complete.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Something went wrong with </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1"> and it threw &#39;</span>
+                          <span class="sa">f</span><span class="s1">&#39;an IndexError...</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">create_excel_from_sds</span><span class="p">(</span><span class="n">sd_list</span><span class="p">,</span> <span class="n">excel_name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Process complete! Results saved as &quot;</span><span class="si">{</span><span class="n">excel_name</span><span class="si">}</span><span class="s1">.xls&quot;&#39;</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">orca-data-extraction</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Peter Waddell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

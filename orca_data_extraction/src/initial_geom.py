@@ -13,7 +13,8 @@ __email__ = "pmwaddell9@gmail.com"
 __status__ = "Prototype"
 
 import re
-from data_section_with_inputs import DataSectionWithInputs
+
+from orca_data_extraction.src.data_section_with_inputs import DataSectionWithInputs
 
 
 class InitialGeometry(DataSectionWithInputs):

@@ -20,7 +20,8 @@ __status__ = "Prototype"
 import os
 import json
 import sys
-from structure_data_builder import StructureDataBuilder
+
+from orca_data_extraction.src.structure_data_builder import StructureDataBuilder
 
 
 def make_json_list(sd_list):

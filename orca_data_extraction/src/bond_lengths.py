@@ -13,8 +13,9 @@ __email__ = "pmwaddell9@gmail.com"
 __status__ = "Prototype"
 
 import math
-from data_section_with_inputs import DataSectionWithInputs
-from final_geom import FinalGeometry
+
+from orca_data_extraction.src.data_section_with_inputs import DataSectionWithInputs
+from orca_data_extraction.src.final_geom import FinalGeometry
 
 
 class BondLengths(DataSectionWithInputs):

@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="xyz-manip-env" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="xyz-manip-env" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="orca-data-ext-env" project-jdk-type="Python SDK" />
 </project>

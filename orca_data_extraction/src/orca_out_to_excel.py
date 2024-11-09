@@ -19,7 +19,8 @@ __status__ = "Prototype"
 
 import os
 import sys
-from structure_data_builder import StructureDataBuilder
+
+from orca_data_extraction.src.structure_data_builder import StructureDataBuilder
 from xlwt import Workbook
 
 

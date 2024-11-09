@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.orca_out_to_json &#8212; orca-data-extraction 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.orca_out_to_json</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A script to quickly pull desired data from an ORCA .out file and compile</span>
+<span class="sd">it into a JSON file.</span>
+
+<span class="sd">Before running, the user should specify what information they want to look for</span>
+<span class="sd">in a .txt file (see example). When executed, the script checks each file in the</span>
+<span class="sd">working directory. If the file ends in .out, it exports the desired data into</span>
+<span class="sd">a JSON file.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2024&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Peter Waddell&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;2024/03/01&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;pmwaddell9@gmail.com&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Prototype&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">orca_data_extraction.src.structure_data_builder</span> <span class="kn">import</span> <span class="n">StructureDataBuilder</span>
+
+
+<div class="viewcode-block" id="make_json_list">
+<a class="viewcode-back" href="../../src.html#src.orca_out_to_json.make_json_list">[docs]</a>
+<span class="k">def</span> <span class="nf">make_json_list</span><span class="p">(</span><span class="n">sd_list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts the data in a list of StructureData instances to a dict for JSON.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sd_list : list</span>
+<span class="sd">        List containing the set of StructureData instances that each come</span>
+<span class="sd">        from the ORCA .out files.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        List with the data from sd_list configured to be compatible with</span>
+<span class="sd">        JSON (i.e., tuples are converted to strings).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">format_column_name</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Format string for use as a column name in the JSON file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : str or other</span>
+<span class="sd">            Entity to be potentially renamed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or other</span>
+<span class="sd">            A string formatted for use as column name in the JSON file, or returns</span>
+<span class="sd">            the object unchanged if it is not a string (e.g., a dict).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>\
+                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>\
+                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>\
+                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>\
+                <span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="n">json_lst</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sd</span> <span class="ow">in</span> <span class="n">sd_list</span><span class="p">:</span>
+        <span class="n">sd_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;script_input_filename&#39;</span><span class="p">:</span> <span class="n">sd</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">(),</span>
+            <span class="s1">&#39;orca_out_filename&#39;</span><span class="p">:</span> <span class="n">sd</span><span class="o">.</span><span class="n">get_out_filename</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">data_section</span> <span class="ow">in</span> <span class="n">sd</span><span class="o">.</span><span class="n">get_data_sections</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">data_section_data</span> <span class="o">=</span> <span class="n">data_section</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+            <span class="n">json_safe_data</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># JSON is not compatible with tuples, so must convert to str</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_section_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">data_section_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="n">key_to_add</span><span class="p">,</span> <span class="n">val_to_add</span> <span class="o">=</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+                    <span class="n">val_to_add</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+                    <span class="n">key_to_add</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">json_safe_data</span><span class="p">[</span><span class="n">format_column_name</span><span class="p">(</span><span class="n">key_to_add</span><span class="p">)]</span> <span class="o">=</span> \
+                    <span class="n">format_column_name</span><span class="p">(</span><span class="n">val_to_add</span><span class="p">)</span>
+            <span class="n">sd_data</span><span class="p">[</span>
+                <span class="n">data_section</span><span class="o">.</span><span class="n">get_section_name</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="n">json_safe_data</span>
+        <span class="n">json_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sd_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json_lst</span></div>
+
+
+
+<div class="viewcode-block" id="create_json_from_sds">
+<a class="viewcode-back" href="../../src.html#src.orca_out_to_json.create_json_from_sds">[docs]</a>
+<span class="k">def</span> <span class="nf">create_json_from_sds</span><span class="p">(</span><span class="n">sd_list</span><span class="p">,</span> <span class="n">json_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes the data in a list of StructureData instances to a JSON file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sd_list : list</span>
+<span class="sd">        List containing the set of StructureData instances that each come</span>
+<span class="sd">        from the ORCA .out files.</span>
+<span class="sd">    json_name : str</span>
+<span class="sd">        Name of the JSON file where the data will be stored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">json_list</span> <span class="o">=</span> <span class="n">make_json_list</span><span class="p">(</span><span class="n">sd_list</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">json_name</span><span class="si">}</span><span class="s1">.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_list</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../src.html#src.orca_out_to_json.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># TODO: use an argument parser here instead? make argument inputs more sophisticated?</span>
+    <span class="n">json_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="c1"># Process command line arguments</span>
+    <span class="c1"># TODO: extract this part for each file type?? let the user select the file type @ command line?</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">inputs_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inputs_name</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No file with name &#39;</span> <span class="o">+</span> <span class="n">inputs_name</span> <span class="o">+</span> <span class="s1">&#39; found.&#39;</span><span class="p">)</span>
+            <span class="n">quit</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">json_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Script will execute on all .out files in the current &#39;</span>
+              <span class="s1">&#39;working directory.&#39;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Name of input file with atom labels (&quot;q&quot; to quit): &#39;</span><span class="p">,</span>
+                  <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">inputs_name</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">inputs_name</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span>
+                <span class="n">quit</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">inputs_name</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No file with name &#39;</span> <span class="o">+</span> <span class="n">inputs_name</span> <span class="o">+</span> <span class="s1">&#39; found.&#39;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">break</span>
+
+    <span class="c1"># Ask for excel file name</span>
+    <span class="k">if</span> <span class="n">json_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Name of the JSON file which will contain the data (press ENTER &#39;</span>
+              <span class="s1">&#39;to use the default name, &quot;q&quot; to quit): &#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">json_name</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">json_name</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span>
+            <span class="n">quit</span><span class="p">()</span>
+        <span class="c1"># If the user just hits enter, use default name:</span>
+        <span class="k">if</span> <span class="n">json_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">json_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;ORCA_data_</span><span class="si">{</span><span class="n">inputs_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">sd_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">structure_data_builder</span> <span class="o">=</span> <span class="n">StructureDataBuilder</span><span class="p">(</span><span class="n">inputs_name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">filename_end</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="c1"># Since it is hard for filenames to be shorter than 4 chars</span>
+                <span class="c1"># I think it is unlikely this error would ever be raised...</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1">: Invalid filename&#39;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">filename_end</span> <span class="o">==</span> <span class="s1">&#39;.out&#39;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Beginning search: </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">sd_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structure_data_builder</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1"> complete.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Something went wrong with </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1"> and it threw &#39;</span>
+                          <span class="sa">f</span><span class="s1">&#39;an IndexError...</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">create_json_from_sds</span><span class="p">(</span><span class="n">sd_list</span><span class="p">,</span> <span class="n">json_name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Process complete! Results saved as &quot;</span><span class="si">{</span><span class="n">json_name</span><span class="si">}</span><span class="s1">.json&quot;&#39;</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">orca-data-extraction</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Peter Waddell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -20,8 +20,9 @@ __status__ = "Prototype"
 import os
 import sys
 import pandas as pd
-from structure_data_builder import StructureDataBuilder
-from orca_out_to_json import make_json_list
+
+from orca_data_extraction.src.structure_data_builder import StructureDataBuilder
+from orca_data_extraction.src.orca_out_to_json import make_json_list
 
 
 def create_csv_from_sds(sd_list, csv_name):

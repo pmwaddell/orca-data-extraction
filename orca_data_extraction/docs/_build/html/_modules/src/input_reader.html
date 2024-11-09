@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.input_reader &#8212; orca-data-extraction 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.input_reader</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The InputReader class finds and stores input info for DataSection subclasses.</span>
+
+<span class="sd">The InputReader class searches for the &quot;inputs&quot; from an input .txt file to be</span>
+<span class="sd">used in the instantiation of various subclasses of the DataSection class,</span>
+<span class="sd">for example: FinalGeometry, MullikenCharges, BondLengths, and BondAngles. It</span>
+<span class="sd">also determines whether the user wants to skip any of these sections, as</span>
+<span class="sd">indicated when the corresponding line in the input .txt file is left blank.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2024&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Peter Waddell&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;2024/02/27&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;pmwaddell9@gmail.com&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Prototype&quot;</span>
+
+
+<div class="viewcode-block" id="InputReader">
+<a class="viewcode-back" href="../../src.html#src.input_reader.InputReader">[docs]</a>
+<span class="k">class</span> <span class="nc">InputReader</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds/stores inputs for DataSection subclasses from structured .txt file.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    __input_filename: str</span>
+<span class="sd">        String of filename of .txt file that contains lists of desired atom</span>
+<span class="sd">        labels for each type of data that will be pulled from the .out file.</span>
+<span class="sd">    __input_contents : lst</span>
+<span class="sd">        List containing a series of strings, one for each line in the given</span>
+<span class="sd">        input .txt file.</span>
+<span class="sd">    __initial_geom_inputs : tuple</span>
+<span class="sd">        Tuple of atom labels for which initial geometry data will be searched.</span>
+<span class="sd">    __final_geom_inputs : tuple</span>
+<span class="sd">        Tuple of atom labels for which final geometry data will be searched.</span>
+<span class="sd">    __bond_length_inputs : tuple</span>
+<span class="sd">        Tuple of &#39;bond tuples&#39; (i.e. tuples of two strings of atom labels,</span>
+<span class="sd">        e.g. (&#39;0 P&#39;, &#39;1 C&#39;)) for which bond length data will be searched.</span>
+<span class="sd">        These need to be tuples because they are hashed later on.</span>
+<span class="sd">    __bond_angle_inputs : tuple</span>
+<span class="sd">        Tuple of &#39;angle tuples&#39; (i.e. tuples of three strings of atom labels,</span>
+<span class="sd">        e.g. (&#39;0 P&#39;, &#39;1 C&#39;, &#39;2 C&#39;)) for which bond angle data will be searched.</span>
+<span class="sd">        These need to be tuples because they are hashed later on.</span>
+<span class="sd">    __mulliken_charge_inputs : tuple</span>
+<span class="sd">        Tuple of atom labels for white Mulliken charge data will be searched.</span>
+<span class="sd">    __mulliken_charge_sum_inputs : tuple</span>
+<span class="sd">        Tuple of tuples of atom lables whose Mulliken charges will be summed.</span>
+<span class="sd">    __loewdin_charge_inputs : tuple</span>
+<span class="sd">        Tuple of atom labels for white Loewdin charge data will be searched.</span>
+<span class="sd">    __loewdin_charge_sum_inputs : tuple</span>
+<span class="sd">        Tuple of tuples of atom lables whose Loewdin charges will be summed.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __readlines_file</span>
+<span class="sd">        Converts a text file to a list of strings, one for each line,</span>
+<span class="sd">        using .readlines().</span>
+<span class="sd">    __read_inputs_atoms</span>
+<span class="sd">        Returns list of input parameters from a given line in input .txt file.</span>
+<span class="sd">        Used for lines that contain a list of atom labels.</span>
+<span class="sd">    __read_inputs_bonds</span>
+<span class="sd">        Returns list of input parameters from a given line in input .txt file.</span>
+<span class="sd">        Used for lines that contain a list of bond labels.</span>
+<span class="sd">    __read_initial_geom</span>
+<span class="sd">        Retrieves the desired atom labels from the input .txt file for</span>
+<span class="sd">        initial geometry.</span>
+<span class="sd">    __read_final_geom</span>
+<span class="sd">        Retrieves the desired atom labels from the input .txt file for</span>
+<span class="sd">        final geometry.</span>
+<span class="sd">    __read_bond_length</span>
+<span class="sd">        Retrieves the desired sets of atom labels (&#39;bond tuples&#39;) from the</span>
+<span class="sd">        input .txt file for bond lengths.</span>
+<span class="sd">    __read_bond_angle</span>
+<span class="sd">        Retrieves the desired sets of atom labels (&#39;angle tuples&#39;) from the</span>
+<span class="sd">        input .txt file for bond angles.</span>
+<span class="sd">    __read_mulliken_charge</span>
+<span class="sd">        Retrieves the desired set of atom labels from the input .txt file for</span>
+<span class="sd">        Mulliken charges.</span>
+<span class="sd">    __read_mulliken_charge_sum</span>
+<span class="sd">        Retrieves the desired set of atom labels (&#39;atom tuples&#39;) from the input</span>
+<span class="sd">        .txt file for Mulliken charge sums.</span>
+<span class="sd">    __read_loewdin_charge</span>
+<span class="sd">        Retrieves the desired set of atom labels from the input .txt file for</span>
+<span class="sd">        Loewdin charges.</span>
+<span class="sd">    __read_lowedin_charge_sum</span>
+<span class="sd">        Retrieves the desired set of atom labels (&#39;atom tuples&#39;) from the input</span>
+<span class="sd">        .txt file for Loewdin charge sums.</span>
+<span class="sd">    get_initial_geom_inputs</span>
+<span class="sd">        Returns tuple of initial geometry inputs.</span>
+<span class="sd">    get_final_geom_inputs</span>
+<span class="sd">        Returns tuple of final geometry inputs.</span>
+<span class="sd">    get_bond_length_inputs</span>
+<span class="sd">        Returns tuple of bond len. inputs (&#39;bond tuples&#39;).</span>
+<span class="sd">    get_bond_angle_inputs</span>
+<span class="sd">        Returns tuple of bond angle inputs (&#39;angle tuples&#39;).</span>
+<span class="sd">    get_mulliken_charge_inputs</span>
+<span class="sd">        Returns tuple of Mulliken charge inputs.</span>
+<span class="sd">    get_mulliken_charge_sum_inputs</span>
+<span class="sd">        Returns tuple of Mulliken charge sum inputs.</span>
+<span class="sd">    get_loewdin_charge_inputs</span>
+<span class="sd">        Returns tuple of Loewdin charge inputs.</span>
+<span class="sd">    get_loewdin_charge_sum_inputs</span>
+<span class="sd">        Returns tuple of Loewdin charge sum inputs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_filename : str</span>
+<span class="sd">            String of filename of .txt file that contains lists of desired atom</span>
+<span class="sd">            labels for each type of data that will be pulled from the .out file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__input_filename</span> <span class="o">=</span> <span class="n">input_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__input_contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__readlines_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__input_filename</span><span class="p">)</span>
+
+        <span class="c1"># Read the values for input attributes from the input text file.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__initial_geom_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_initial_geom</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__final_geom_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_final_geom</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bond_length_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_bond_length</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__bond_angle_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_bond_angle</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__mulliken_charge_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_mulliken_charge</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__mulliken_charge_sum_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_mulliken_charge_sum</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__loewdin_charge_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_loewdin_charge</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__loewdin_charge_sum_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_loewdin_charge_sum</span><span class="p">()</span>
+        <span class="c1"># TODO: I&#39;m thinkin of holding these in a dictionary like StructureData now does</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__readlines_file</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a text file to a list of strings, one for each line,</span>
+<span class="sd">        using .readlines().</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        f : str</span>
+<span class="sd">            Filename of the desired file to read.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        contents : lst</span>
+<span class="sd">            List of strings, one for each line of text in the file.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        FileNotFoundError</span>
+<span class="sd">            If f is not the filename of a file in the current directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_object</span><span class="p">:</span>
+                <span class="n">contents</span> <span class="o">=</span> <span class="n">file_object</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File not found&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">file_object</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">contents</span>
+
+    <span class="k">def</span> <span class="nf">__read_inputs_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_num</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of input parameters from a given line in input .txt file.</span>
+<span class="sd">        Used for lines that contains a series of atom labels: e.g. P1,P2,N5 etc.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        line_num : int</span>
+<span class="sd">            Number of the desired line.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple of list that results from splitting the specified line in the</span>
+<span class="sd">            input .txt file, using a comma as the separator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__input_contents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="n">line_num</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_inputs_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_num</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of tuples of input parameters from a given line in input</span>
+<span class="sd">        .txt file.</span>
+<span class="sd">        Used for lines that contain lists of labels:</span>
+<span class="sd">        e.g. (0 P,1 C);(2 H,3 B) etc.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        line_num : int</span>
+<span class="sd">            Number of the desired line.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple of tuples that results from splitting the specified line in</span>
+<span class="sd">            the input .txt file, using a semicolon as the separator, and</span>
+<span class="sd">            removing the parentheses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__input_contents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="n">line_num</span><span class="p">:</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">temp</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">elem</span><span class="p">:</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="p">[()]:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_inputs_lists_sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_num</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of SORTED tuples of input parameters from a given line in</span>
+<span class="sd">        input .txt file.</span>
+
+<span class="sd">        Used for lines that contain lists of items that can be sorted</span>
+<span class="sd">        without causing major problems. The reason one would want to do this is</span>
+<span class="sd">        to reduce ambiguity in future function calls, so that e.g. the atom</span>
+<span class="sd">        labels could be supplied in any order and the same entry would be found.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        line_num : int</span>
+<span class="sd">            Number of the desired line.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tuple</span>
+<span class="sd">            Tuple of sorted tuples that results from splitting the specified</span>
+<span class="sd">            line in the input .txt file, using a semicolon as the separator,</span>
+<span class="sd">            and removing the parentheses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__input_contents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="n">line_num</span><span class="p">:</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">temp</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">elem</span><span class="p">:</span>
+                        <span class="n">elem_lst</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">elem_lst</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="p">[()]:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_initial_geom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the desired atom labels from the input .txt file for</span>
+<span class="sd">        initial (i.e., user-input) geometry.</span>
+
+<span class="sd">        If the line is blank in the input .txt file (meaning this section should</span>
+<span class="sd">        be skipped for this run of the script), this returns [&#39;&#39;].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lst</span>
+<span class="sd">            List of atom labels for which initial geom. data will be searched.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_inputs_atoms</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_final_geom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the desired atom labels from the input .txt file for the</span>
+<span class="sd">        final (e.g., after geometry optimization) geometry.</span>
+
+<span class="sd">        If the line is blank in the input .txt file (meaning this section should</span>
+<span class="sd">        be skipped for this run of the script), this returns [&#39;&#39;].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lst</span>
+<span class="sd">            List of atom labels for which final geometry data will be searched.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_inputs_atoms</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_bond_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the desired sets of atom labels (&#39;bond tuples&#39;) from the input</span>
+<span class="sd">        .txt file for bond lengths.</span>
+
+<span class="sd">        If the line is blank in the input .txt file (meaning this section should</span>
+<span class="sd">        be skipped for this run of the script), this returns [()].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lst</span>
+<span class="sd">            List of &#39;bond tuples&#39; (i.e. tuples of two strings of atom labels,</span>
+<span class="sd">            e.g. (&#39;0 P&#39;, &#39;1 C&#39;) for which bond length data will be searched or</span>
+<span class="sd">            calculated. These need to be tuples because they are hashed later.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_inputs_lists</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_bond_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the desired sets of atom labels (&#39;angle tuples&#39;) from the</span>
+<span class="sd">        input .txt file for bond angles.</span>
+
+<span class="sd">        If the line is blank in the input .txt file (meaning this section should</span>
+<span class="sd">        be skipped for this run of the script), this returns [()].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lst</span>
+<span class="sd">            List of &#39;angle tuples&#39; (i.e. tuples of three strings of atom labels,</span>
+<span class="sd">            e.g. (&#39;0 P&#39;, &#39;1 C&#39;, &#39;2 C&#39;) for which bond angle data will be searched</span>
+<span class="sd">            or calculated. These need to be tuples bc they are hashed later.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_inputs_lists</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_mulliken_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the desired atom labels from the input .txt file for</span>
+<span class="sd">        Mulliken charges.</span>
+
+<span class="sd">        If the line is blank in the input .txt file (meaning this section should</span>
+<span class="sd">        be skipped for this run of the script), this returns [&#39;&#39;].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lst</span>
+<span class="sd">            List of atom labels for which Mulliken charge data will be searched.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_inputs_atoms</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_mulliken_charge_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the desired atom labels from the input .txt file for</span>
+<span class="sd">        Mulliken charge sum calculation.</span>
+
+<span class="sd">        If the line is blank in the input .txt file (meaning this section should</span>
+<span class="sd">        be skipped for this run of the script), this returns [&#39;&#39;].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lst</span>
+<span class="sd">            List of atom labels for which Mulliken charge sum data will</span>
+<span class="sd">            be calculated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_inputs_lists_sort</span><span class="p">(</span><span class="mi">19</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_loewdin_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the desired atom labels from the input .txt file for</span>
+<span class="sd">        Loewdin charges.</span>
+
+<span class="sd">        If the line is blank in the input .txt file (meaning this section should</span>
+<span class="sd">        be skipped for this run of the script), this returns [&#39;&#39;].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lst</span>
+<span class="sd">            List of atom labels for which Loewdin charge data will be searched.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_inputs_atoms</span><span class="p">(</span><span class="mi">22</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__read_loewdin_charge_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the desired atom labels from the input .txt file for</span>
+<span class="sd">        Loewdin charge sum calculation.</span>
+
+<span class="sd">        If the line is blank in the input .txt file (meaning this section should</span>
+<span class="sd">        be skipped for this run of the script), this returns [&#39;&#39;].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lst</span>
+<span class="sd">            List of atom labels for which Loewdin charge sum data will</span>
+<span class="sd">            be calculated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_inputs_lists_sort</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+
+    <span class="c1"># Getter/selector methods:</span>
+<div class="viewcode-block" id="InputReader.get_initial_geom_inputs">
+<a class="viewcode-back" href="../../src.html#src.input_reader.InputReader.get_initial_geom_inputs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_initial_geom_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of initial geometry inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            __initial_geom_inputs attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__initial_geom_inputs</span></div>
+
+
+<div class="viewcode-block" id="InputReader.get_final_geom_inputs">
+<a class="viewcode-back" href="../../src.html#src.input_reader.InputReader.get_final_geom_inputs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_final_geom_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of final geometry inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            __final_geom_inputs attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__final_geom_inputs</span></div>
+
+
+<div class="viewcode-block" id="InputReader.get_bond_length_inputs">
+<a class="viewcode-back" href="../../src.html#src.input_reader.InputReader.get_bond_length_inputs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_bond_length_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of bond length inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            __bond_length_inputs attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bond_length_inputs</span></div>
+
+
+<div class="viewcode-block" id="InputReader.get_bond_angle_inputs">
+<a class="viewcode-back" href="../../src.html#src.input_reader.InputReader.get_bond_angle_inputs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_bond_angle_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of bond angle inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            __bond_angle_inputs attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bond_angle_inputs</span></div>
+
+
+<div class="viewcode-block" id="InputReader.get_mulliken_charge_inputs">
+<a class="viewcode-back" href="../../src.html#src.input_reader.InputReader.get_mulliken_charge_inputs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_mulliken_charge_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of Mulliken charge inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            __mulliken_charge_inputs attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mulliken_charge_inputs</span></div>
+
+
+<div class="viewcode-block" id="InputReader.get_mulliken_charge_sum_inputs">
+<a class="viewcode-back" href="../../src.html#src.input_reader.InputReader.get_mulliken_charge_sum_inputs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_mulliken_charge_sum_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of Mulliken charge sum inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            __mulliken_charge_inputs attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mulliken_charge_sum_inputs</span></div>
+
+
+<div class="viewcode-block" id="InputReader.get_loewdin_charge_inputs">
+<a class="viewcode-back" href="../../src.html#src.input_reader.InputReader.get_loewdin_charge_inputs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_loewdin_charge_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of Loewdin charge inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            __loewdin_charge_inputs attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__loewdin_charge_inputs</span></div>
+
+
+<div class="viewcode-block" id="InputReader.get_loewdin_charge_sum_inputs">
+<a class="viewcode-back" href="../../src.html#src.input_reader.InputReader.get_loewdin_charge_sum_inputs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_loewdin_charge_sum_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns tuple of Loewdin charge sum inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            __loewdin_charge_sum_inputs attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__loewdin_charge_sum_inputs</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">orca-data-extraction</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Peter Waddell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

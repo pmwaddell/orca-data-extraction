@@ -10,7 +10,7 @@ __status__ = "Prototype"
 
 import unittest
 import math
-from structure_data_builder import StructureDataBuilder
+from orca_data_extraction.src.structure_data_builder import StructureDataBuilder
 
 
 class TestStructureData(unittest.TestCase):

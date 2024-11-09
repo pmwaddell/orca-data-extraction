@@ -16,8 +16,8 @@ __maintainer__ = "Peter Waddell"
 __email__ = "pmwaddell9@gmail.com"
 __status__ = "Prototype"
 
-from data_section_with_inputs import DataSectionWithInputs
-from loewdin_charges import LoewdinCharges
+from orca_data_extraction.src.data_section_with_inputs import DataSectionWithInputs
+from orca_data_extraction.src.loewdin_charges import LoewdinCharges
 
 
 class LoewdinChargeSums(DataSectionWithInputs):

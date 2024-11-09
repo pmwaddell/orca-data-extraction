@@ -14,19 +14,19 @@ __maintainer__ = "Peter Waddell"
 __email__ = "pmwaddell9@gmail.com"
 __status__ = "Prototype"
 
-from structure_data import StructureData
-from input_reader import InputReader
-from initial_geom import InitialGeometry
-from final_geom import FinalGeometry
-from mulliken_charges import MullikenCharges
-from mulliken_charge_sums import MullikenChargeSums
-from loewdin_charges import LoewdinCharges
-from loewdin_charge_sums import LoewdinChargeSums
-from homo_lumo_energies import HOMOLUMOEnergies
-from bond_lengths import BondLengths
-from bond_angles import BondAngles
-from polarizability import Polarizability
-from dipole_moments import DipoleMoments
+from orca_data_extraction.src.structure_data import StructureData
+from orca_data_extraction.src.input_reader import InputReader
+from orca_data_extraction.src.initial_geom import InitialGeometry
+from orca_data_extraction.src.final_geom import FinalGeometry
+from orca_data_extraction.src.mulliken_charges import MullikenCharges
+from orca_data_extraction.src.mulliken_charge_sums import MullikenChargeSums
+from orca_data_extraction.src.loewdin_charges import LoewdinCharges
+from orca_data_extraction.src.loewdin_charge_sums import LoewdinChargeSums
+from orca_data_extraction.src.homo_lumo_energies import HOMOLUMOEnergies
+from orca_data_extraction.src.bond_lengths import BondLengths
+from orca_data_extraction.src.bond_angles import BondAngles
+from orca_data_extraction.src.polarizability import Polarizability
+from orca_data_extraction.src.dipole_moments import DipoleMoments
 
 
 class StructureDataBuilder:
