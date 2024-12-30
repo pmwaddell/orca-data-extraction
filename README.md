@@ -27,7 +27,7 @@ run these scripts from anywhere.
 First, run your desired calculations with [ORCA](https://www.kofo.mpg.de/en/research/services/orca) and obtain the 
 resulting .out files. 
 
-Next, prepare an input.txt file for this script, based on the example found in orca-data-extraction/orca_data_extraction/data. 
+Next, prepare an input JSON file for this script, based on the example: orca_data_extraction/data/PPh3_test_input.json. 
 Specify the information you would like to extract from the ORCA .out file by providing the desired "atom labels" for 
 each category of interest. The term "atom label" refers to ORCA's scheme of distinguishing each atom in the structure, 
 which follow the pattern of "number element", for example: "19 C". These can be found in the ORCA .out file: for 
@@ -37,12 +37,13 @@ atom labels therein to the atoms of interest.
 The categories of data are: initial geometry, final geometry, bond lengths, bond angles, Mulliken charges and charge 
 sums, and Loewdin charges and charge sums. Initial geometry refers to the geometry input to ORCA by the user: for 
 example, the starting geometry in a geometry optimization calculation. Final geometry is the geometry at the end of the 
-calculation, or the final set of geometry data appearing in the .out file. For single point calculations, initial and 
-final geometry should be the same. Bond lengths and bond angles are calculated based on the "final geometry" in the 
+calculation, or the final set of geometry data appearing in the .out file. For pure single point calculations, initial 
+and final geometry should be the same. Bond lengths and bond angles are calculated based on the "final geometry" in the 
 ORCA .out file. Note that any set of two or three atoms, respectively, can be specified for these sections: they do not 
-have to be in a bonding relationship of any sort. Mulliken and Loewdin charges are based on the final geometry of the 
-calculation as well. In addition, dipole moment, polarizability and HOMO LUMO energy data will also be provided in 
-available in the calculation.
+have to be in a bonding relationship of any sort. For bond angles, the second atom listed indicates the atom around 
+which the angle is determined. Mulliken and Loewdin charges are based on the final geometry of the calculation as well. 
+In addition, dipole moment, polarizability and HOMO LUMO energy data will also be provided in available in the 
+calculation.
 
 Then, run the script (orca_out_to_*.py) of your choice in the directory containing the .out files depending on the 
 desired output: CSV, JSON or Excel. Provide the name of the input .txt file you prepared as well as the desired name 

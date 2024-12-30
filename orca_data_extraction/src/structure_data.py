@@ -10,8 +10,8 @@ subclasses as values. It contains methods to get data from these sections.
 __author__ = "Peter Waddell"
 __copyright__ = "Copyright 2024"
 __credits__ = ["Peter Waddell"]
-__version__ = "0.1.0"
-__date__ = "2024/02/27"
+__version__ = "0.1.1"
+__date__ = "2024/12/30"
 __maintainer__ = "Peter Waddell"
 __email__ = "pmwaddell9@gmail.com"
 __status__ = "Prototype"
@@ -142,7 +142,7 @@ class StructureData:
             return self.__data_sections[section_name]
         except KeyError:
             return f'ERROR: Data section {section_name} not found in ' \
-                   f'{self.get_input_filename()} (input .txt file).'
+                   f'{self.get_input_filename()} (input file).'
 
     def get_data_section_data(self, section_name):
         """
@@ -164,7 +164,7 @@ class StructureData:
             return self.get_data_section(section_name).get_data()
         except AttributeError:
             return f'ERROR: Data section {section_name} not found in ' \
-                   f'{self.get_input_filename()} (input .txt file).'
+                   f'{self.get_input_filename()} (input file).'
 
     def get_data_section_datum(self, section_name, datum_label):
         """
@@ -190,4 +190,4 @@ class StructureData:
             return self.get_data_section(section_name).get_datum(datum_label)
         except AttributeError:
             return f'ERROR: Data section {section_name} not found in ' \
-                   f'{self.get_input_filename()} (input .txt file).'
+                   f'{self.get_input_filename()} (input file).'

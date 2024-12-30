@@ -387,15 +387,15 @@ user) geometry data from an ORCA .out file.</p>
 </section>
 <section id="module-src.input_reader">
 <span id="src-input-reader-module"></span><h2>src.input_reader module<a class="headerlink" href="#module-src.input_reader" title="Link to this heading">¶</a></h2>
-<p>The InputReader class finds and stores input info for DataSection subclasses.</p>
-<p>The InputReader class searches for the “inputs” from an input .txt file to be
+<p>The InputReaderTxt class finds and stores input info for DataSection subclasses.</p>
+<p>The InputReaderTxt class searches for the “inputs” from an input .txt file to be
 used in the instantiation of various subclasses of the DataSection class,
 for example: FinalGeometry, MullikenCharges, BondLengths, and BondAngles. It
 also determines whether the user wants to skip any of these sections, as
 indicated when the corresponding line in the input .txt file is left blank.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.input_reader.InputReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.input_reader.</span></span><span class="sig-name descname"><span class="pre">InputReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.input_reader.</span></span><span class="sig-name descname"><span class="pre">InputReaderTxt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Finds/stores inputs for DataSection subclasses from structured .txt file.</p>
 <section id="id20">
@@ -1069,7 +1069,7 @@ the StructureData class based on a given filename for an input .txt file.</p>
 <dt>__input_filename<span class="classifier">str</span></dt><dd><p>String of filename of .txt file that contains lists of desired atom
 labels for each type of data that will be pulled from the .out file.</p>
 </dd>
-<dt>__input_reader<span class="classifier">InputReader</span></dt><dd><p>Instance of InputReader used to retrieve the inputs for the
+<dt>__input_reader<span class="classifier">InputReaderTxt</span></dt><dd><p>Instance of InputReaderTxt used to retrieve the inputs for the
 StructureData objects this instance builds.</p>
 </dd>
 </dl>

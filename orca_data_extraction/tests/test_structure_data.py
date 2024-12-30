@@ -2,8 +2,8 @@
 __author__ = "Peter Waddell"
 __copyright__ = "Copyright 2024"
 __credits__ = ["Peter Waddell"]
-__version__ = "0.1.0"
-__date__ = "2024/02/29"
+__version__ = "0.1.1"
+__date__ = "2024/12/30"
 __maintainer__ = "Peter Waddell"
 __email__ = "pmwaddell9@gmail.com"
 __status__ = "Prototype"
@@ -24,10 +24,10 @@ class TestStructureData(unittest.TestCase):
         optimization (PPh3_opt.out), the other a single point calculation
         (PPh3_sp.out); finally, another variant skips the Bond Lengths section.
         """
-        sd_builder = StructureDataBuilder('PPh3_test_input.txt')
+        sd_builder = StructureDataBuilder('PPh3_test_input.json')
         self.test_sd_opt = sd_builder.build('PPh3_opt.out')
         self.test_sd_sp = sd_builder.build('PPh3_sp.out')
-        sd_builder_skip = StructureDataBuilder('PPh3_test_input_skip.txt')
+        sd_builder_skip = StructureDataBuilder('PPh3_test_input_skip.json')
         self.test_sd_skip = sd_builder_skip.build('PPh3_opt.out')
 
     def test_skip_section(self):
@@ -37,11 +37,11 @@ class TestStructureData(unittest.TestCase):
         """
         self.assertEqual(self.test_sd_skip.get_data_section('Bond Lengths'),
                          'ERROR: Data section Bond Lengths not found in '
-                         'PPh3_test_input_skip.txt (input .txt file).')
+                         'PPh3_test_input_skip.json (input file).')
         self.assertEqual(self.test_sd_skip.get_data_section_datum(
             'Bond Lengths', ()),
-            'ERROR: Data section Bond Lengths not found in PPh3_test_input_skip.txt '
-            '(input .txt file).')
+            'ERROR: Data section Bond Lengths not found in PPh3_test_input_skip.json '
+            '(input file).')
         print('Section skipping test complete.\n')
 
     def test_find_initial_geom_data(self):

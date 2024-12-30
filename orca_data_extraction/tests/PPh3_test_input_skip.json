@@ -1,0 +1,16 @@
+{
+  "initial_geometry_atom_labels": ["0 P","1 C","2 C","3 H","18 H","19 C","11 B","1 H"],
+  "final_geometry_atom_labels": ["0 P","1 C","2 C","3 H","18 H","19 C","11 B","1 H"],
+  "bond_length_data_labels": [],
+  "bond_angle_data_labels": [
+    ["0 P","1 C","2 C"],["3 H","2 C","1 C"],["1 C","2 C","3 H"],["0 P","3 H","18 H"],["1 C","2 C","11 B"]
+  ],
+  "mulliken_charge_atom_labels": ["0 P","1 C","2 C","3 H","19 C","18 H","11 B","1 H"],
+  "mulliken_charge_sum_atom_label_lists": [
+    ["0 P","1 C","2 C","3 H","19 C","18 H"],["0 P"],["0 P","3 H"],["0 P","1 C","2 C","3 H","19 C","11 B"]
+  ],
+  "loewdin_charge_atom_labels": ["0 P","1 C","2 C","3 H","19 C","18 H","11 B","1 H"],
+  "loewdin_charge_sum_label_lists": [
+    ["0 P","1 C","2 C","3 H","19 C","18 H"],["0 P"],["0 P","3 H"],["0 P","1 C","2 C","3 H","19 C","11 B"]
+  ]
+}

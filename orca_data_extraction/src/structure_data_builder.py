@@ -8,14 +8,14 @@ the StructureData class based on a given filename for an input .txt file.
 __author__ = "Peter Waddell"
 __copyright__ = "Copyright 2024"
 __credits__ = ["Peter Waddell"]
-__version__ = "0.1.0"
-__date__ = "2024/02/27"
+__version__ = "0.1.1"
+__date__ = "2024/12/30"
 __maintainer__ = "Peter Waddell"
 __email__ = "pmwaddell9@gmail.com"
 __status__ = "Prototype"
 
 from orca_data_extraction.src.structure_data import StructureData
-from orca_data_extraction.src.input_reader import InputReader
+from orca_data_extraction.src.input_reader_json import InputReaderJSON
 from orca_data_extraction.src.initial_geom import InitialGeometry
 from orca_data_extraction.src.final_geom import FinalGeometry
 from orca_data_extraction.src.mulliken_charges import MullikenCharges
@@ -38,7 +38,7 @@ class StructureDataBuilder:
     __input_filename : str
         String of filename of .txt file that contains lists of desired atom
         labels for each type of data that will be pulled from the .out file.
-    __input_reader : InputReader
+    __input_reader : InputReaderJSON
         Instance of InputReader used to retrieve the inputs for the
         StructureData objects this instance builds.
     """
@@ -52,7 +52,7 @@ class StructureDataBuilder:
         """
         self.__input_filename = input_filename
         # TODO: another opportunity for Dependency Injection???? or not????
-        self.__input_reader = InputReader(input_filename)
+        self.__input_reader = InputReaderJSON(input_filename)
 
     def build(self, out_filename):
         """

@@ -1,0 +1,10 @@
+{
+  "initial_geometry_atom_labels": ["0 O","1 H","2 H"],
+  "final_geometry_atom_labels": ["0 O","1 H","2 H"],
+  "bond_length_data_labels": [["1 H","0 O"],["0 O","2 H"]],
+  "bond_angle_data_labels": [["1 H","0 O","2 H"],["2 H","0 O","1 H"]],
+  "mulliken_charge_atom_labels": ["0 O","1 H","2 H"],
+  "mulliken_charge_sum_atom_label_lists": [["1 H","0 O","2 H"],["2 H","1 H"],["0 O"]],
+  "loewdin_charge_atom_labels": ["0 O","1 H","2 H"],
+  "loewdin_charge_sum_label_lists": [["1 H","0 O","2 H"],["2 H","1 H"],["0 O"]]
+}
