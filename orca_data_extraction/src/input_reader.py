@@ -19,7 +19,7 @@ from abc import ABC, abstractmethod
 
 class InputReader(ABC):
     """
-    Finds and stores input data for DataSection subclasses from JSON file.
+    Finds and stores input data for DataSection subclasses from an input file.
     """
     def __init__(self, input_filename):
         self._input_filename = input_filename

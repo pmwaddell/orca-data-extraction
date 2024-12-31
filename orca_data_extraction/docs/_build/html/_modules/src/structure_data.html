@@ -42,8 +42,8 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2024&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Peter Waddell&quot;</span><span class="p">]</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
-<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;2024/02/27&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1.1&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;2024/12/30&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Peter Waddell&quot;</span>
 <span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;pmwaddell9@gmail.com&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Prototype&quot;</span>
@@ -190,7 +190,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data_sections</span><span class="p">[</span><span class="n">section_name</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;ERROR: Data section </span><span class="si">{</span><span class="n">section_name</span><span class="si">}</span><span class="s1"> not found in &#39;</span> \
-                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">()</span><span class="si">}</span><span class="s1"> (input .txt file).&#39;</span></div>
+                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">()</span><span class="si">}</span><span class="s1"> (input file).&#39;</span></div>
 
 
 <div class="viewcode-block" id="StructureData.get_data_section_data">
@@ -215,7 +215,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_section</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;ERROR: Data section </span><span class="si">{</span><span class="n">section_name</span><span class="si">}</span><span class="s1"> not found in &#39;</span> \
-                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">()</span><span class="si">}</span><span class="s1"> (input .txt file).&#39;</span></div>
+                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">()</span><span class="si">}</span><span class="s1"> (input file).&#39;</span></div>
 
 
 <div class="viewcode-block" id="StructureData.get_data_section_datum">
@@ -244,7 +244,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_section</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_datum</span><span class="p">(</span><span class="n">datum_label</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;ERROR: Data section </span><span class="si">{</span><span class="n">section_name</span><span class="si">}</span><span class="s1"> not found in &#39;</span> \
-                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">()</span><span class="si">}</span><span class="s1"> (input .txt file).&#39;</span></div>
+                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_input_filename</span><span class="p">()</span><span class="si">}</span><span class="s1"> (input file).&#39;</span></div>
 </div>
 
 </pre></div>

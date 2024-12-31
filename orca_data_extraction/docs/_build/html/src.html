@@ -387,206 +387,62 @@ user) geometry data from an ORCA .out file.</p>
 </section>
 <section id="module-src.input_reader">
 <span id="src-input-reader-module"></span><h2>src.input_reader module<a class="headerlink" href="#module-src.input_reader" title="Link to this heading">¶</a></h2>
-<p>The InputReaderTxt class finds and stores input info for DataSection subclasses.</p>
-<p>The InputReaderTxt class searches for the “inputs” from an input .txt file to be
-used in the instantiation of various subclasses of the DataSection class,
-for example: FinalGeometry, MullikenCharges, BondLengths, and BondAngles. It
-also determines whether the user wants to skip any of these sections, as
-indicated when the corresponding line in the input .txt file is left blank.</p>
+<p>Structures subclasses that represent “Input Readers”.</p>
+<p>For our purposes, “Input Readers” read in information from the user related to
+what data they want to extract from the ORCA .out file.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.input_reader.InputReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.input_reader.</span></span><span class="sig-name descname"><span class="pre">InputReaderTxt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Finds/stores inputs for DataSection subclasses from structured .txt file.</p>
-<section id="id20">
-<h3>Attributes<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
-<dl class="simple">
-<dt>__input_filename: str</dt><dd><p>String of filename of .txt file that contains lists of desired atom
-labels for each type of data that will be pulled from the .out file.</p>
-</dd>
-<dt>__input_contents<span class="classifier">lst</span></dt><dd><p>List containing a series of strings, one for each line in the given
-input .txt file.</p>
-</dd>
-<dt>__initial_geom_inputs<span class="classifier">tuple</span></dt><dd><p>Tuple of atom labels for which initial geometry data will be searched.</p>
-</dd>
-<dt>__final_geom_inputs<span class="classifier">tuple</span></dt><dd><p>Tuple of atom labels for which final geometry data will be searched.</p>
-</dd>
-<dt>__bond_length_inputs<span class="classifier">tuple</span></dt><dd><p>Tuple of ‘bond tuples’ (i.e. tuples of two strings of atom labels,
-e.g. (‘0 P’, ‘1 C’)) for which bond length data will be searched.
-These need to be tuples because they are hashed later on.</p>
-</dd>
-<dt>__bond_angle_inputs<span class="classifier">tuple</span></dt><dd><p>Tuple of ‘angle tuples’ (i.e. tuples of three strings of atom labels,
-e.g. (‘0 P’, ‘1 C’, ‘2 C’)) for which bond angle data will be searched.
-These need to be tuples because they are hashed later on.</p>
-</dd>
-<dt>__mulliken_charge_inputs<span class="classifier">tuple</span></dt><dd><p>Tuple of atom labels for white Mulliken charge data will be searched.</p>
-</dd>
-<dt>__mulliken_charge_sum_inputs<span class="classifier">tuple</span></dt><dd><p>Tuple of tuples of atom lables whose Mulliken charges will be summed.</p>
-</dd>
-<dt>__loewdin_charge_inputs<span class="classifier">tuple</span></dt><dd><p>Tuple of atom labels for white Loewdin charge data will be searched.</p>
-</dd>
-<dt>__loewdin_charge_sum_inputs<span class="classifier">tuple</span></dt><dd><p>Tuple of tuples of atom lables whose Loewdin charges will be summed.</p>
-</dd>
-</dl>
-</section>
-<section id="id21">
-<h3>Methods<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h3>
-<dl class="simple">
-<dt>__readlines_file</dt><dd><p>Converts a text file to a list of strings, one for each line,
-using .readlines().</p>
-</dd>
-<dt>__read_inputs_atoms</dt><dd><p>Returns list of input parameters from a given line in input .txt file.
-Used for lines that contain a list of atom labels.</p>
-</dd>
-<dt>__read_inputs_bonds</dt><dd><p>Returns list of input parameters from a given line in input .txt file.
-Used for lines that contain a list of bond labels.</p>
-</dd>
-<dt>__read_initial_geom</dt><dd><p>Retrieves the desired atom labels from the input .txt file for
-initial geometry.</p>
-</dd>
-<dt>__read_final_geom</dt><dd><p>Retrieves the desired atom labels from the input .txt file for
-final geometry.</p>
-</dd>
-<dt>__read_bond_length</dt><dd><p>Retrieves the desired sets of atom labels (‘bond tuples’) from the
-input .txt file for bond lengths.</p>
-</dd>
-<dt>__read_bond_angle</dt><dd><p>Retrieves the desired sets of atom labels (‘angle tuples’) from the
-input .txt file for bond angles.</p>
-</dd>
-<dt>__read_mulliken_charge</dt><dd><p>Retrieves the desired set of atom labels from the input .txt file for
-Mulliken charges.</p>
-</dd>
-<dt>__read_mulliken_charge_sum</dt><dd><p>Retrieves the desired set of atom labels (‘atom tuples’) from the input
-.txt file for Mulliken charge sums.</p>
-</dd>
-<dt>__read_loewdin_charge</dt><dd><p>Retrieves the desired set of atom labels from the input .txt file for
-Loewdin charges.</p>
-</dd>
-<dt>__read_lowedin_charge_sum</dt><dd><p>Retrieves the desired set of atom labels (‘atom tuples’) from the input
-.txt file for Loewdin charge sums.</p>
-</dd>
-<dt>get_initial_geom_inputs</dt><dd><p>Returns tuple of initial geometry inputs.</p>
-</dd>
-<dt>get_final_geom_inputs</dt><dd><p>Returns tuple of final geometry inputs.</p>
-</dd>
-<dt>get_bond_length_inputs</dt><dd><p>Returns tuple of bond len. inputs (‘bond tuples’).</p>
-</dd>
-<dt>get_bond_angle_inputs</dt><dd><p>Returns tuple of bond angle inputs (‘angle tuples’).</p>
-</dd>
-<dt>get_mulliken_charge_inputs</dt><dd><p>Returns tuple of Mulliken charge inputs.</p>
-</dd>
-<dt>get_mulliken_charge_sum_inputs</dt><dd><p>Returns tuple of Mulliken charge sum inputs.</p>
-</dd>
-<dt>get_loewdin_charge_inputs</dt><dd><p>Returns tuple of Loewdin charge inputs.</p>
-</dd>
-<dt>get_loewdin_charge_sum_inputs</dt><dd><p>Returns tuple of Loewdin charge sum inputs.</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.input_reader.</span></span><span class="sig-name descname"><span class="pre">InputReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Finds and stores input data for DataSection subclasses from an input file.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.input_reader.InputReader.get_bond_angle_inputs">
-<span class="sig-name descname"><span class="pre">get_bond_angle_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_bond_angle_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_bond_angle_inputs" title="Link to this definition">¶</a></dt>
-<dd><p>Returns tuple of bond angle inputs.</p>
-<section id="id22">
-<h4>Returns<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>tuple</dt><dd><p>__bond_angle_inputs attribute.</p>
-</dd>
-</dl>
-</section>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_bond_angle_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_bond_angle_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_bond_angle_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Returns bond angle inputs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.input_reader.InputReader.get_bond_length_inputs">
-<span class="sig-name descname"><span class="pre">get_bond_length_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_bond_length_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_bond_length_inputs" title="Link to this definition">¶</a></dt>
-<dd><p>Returns tuple of bond length inputs.</p>
-<section id="id23">
-<h4>Returns<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>tuple</dt><dd><p>__bond_length_inputs attribute.</p>
-</dd>
-</dl>
-</section>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_bond_length_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_bond_length_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_bond_length_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Returns  of bond length inputs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.input_reader.InputReader.get_final_geom_inputs">
-<span class="sig-name descname"><span class="pre">get_final_geom_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_final_geom_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_final_geom_inputs" title="Link to this definition">¶</a></dt>
-<dd><p>Returns tuple of final geometry inputs.</p>
-<section id="id24">
-<h4>Returns<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>tuple</dt><dd><p>__final_geom_inputs attribute.</p>
-</dd>
-</dl>
-</section>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_final_geom_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_final_geom_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_final_geom_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Returns final geometry inputs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.input_reader.InputReader.get_initial_geom_inputs">
-<span class="sig-name descname"><span class="pre">get_initial_geom_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_initial_geom_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_initial_geom_inputs" title="Link to this definition">¶</a></dt>
-<dd><p>Returns tuple of initial geometry inputs.</p>
-<section id="id25">
-<h4>Returns<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>tuple</dt><dd><p>__initial_geom_inputs attribute.</p>
-</dd>
-</dl>
-</section>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_initial_geom_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_initial_geom_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_initial_geom_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Returns initial geometry inputs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.input_reader.InputReader.get_loewdin_charge_inputs">
-<span class="sig-name descname"><span class="pre">get_loewdin_charge_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_loewdin_charge_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_loewdin_charge_inputs" title="Link to this definition">¶</a></dt>
-<dd><p>Returns tuple of Loewdin charge inputs.</p>
-<section id="id26">
-<h4>Returns<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>tuple</dt><dd><p>__loewdin_charge_inputs attribute.</p>
-</dd>
-</dl>
-</section>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_loewdin_charge_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_loewdin_charge_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_loewdin_charge_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Returns Loewdin charge inputs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.input_reader.InputReader.get_loewdin_charge_sum_inputs">
-<span class="sig-name descname"><span class="pre">get_loewdin_charge_sum_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_loewdin_charge_sum_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_loewdin_charge_sum_inputs" title="Link to this definition">¶</a></dt>
-<dd><p>Returns tuple of Loewdin charge sum inputs.</p>
-<section id="id27">
-<h4>Returns<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>tuple</dt><dd><p>__loewdin_charge_sum_inputs attribute.</p>
-</dd>
-</dl>
-</section>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_loewdin_charge_sum_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_loewdin_charge_sum_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_loewdin_charge_sum_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Returns Loewdin charge sum inputs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.input_reader.InputReader.get_mulliken_charge_inputs">
-<span class="sig-name descname"><span class="pre">get_mulliken_charge_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_mulliken_charge_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_mulliken_charge_inputs" title="Link to this definition">¶</a></dt>
-<dd><p>Returns tuple of Mulliken charge inputs.</p>
-<section id="id28">
-<h4>Returns<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>tuple</dt><dd><p>__mulliken_charge_inputs attribute.</p>
-</dd>
-</dl>
-</section>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_mulliken_charge_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_mulliken_charge_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_mulliken_charge_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Returns Mulliken charge inputs.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.input_reader.InputReader.get_mulliken_charge_sum_inputs">
-<span class="sig-name descname"><span class="pre">get_mulliken_charge_sum_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_mulliken_charge_sum_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_mulliken_charge_sum_inputs" title="Link to this definition">¶</a></dt>
-<dd><p>Returns tuple of Mulliken charge sum inputs.</p>
-<section id="id29">
-<h4>Returns<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>tuple</dt><dd><p>__mulliken_charge_inputs attribute.</p>
-</dd>
-</dl>
-</section>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_mulliken_charge_sum_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/input_reader.html#InputReader.get_mulliken_charge_sum_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.input_reader.InputReader.get_mulliken_charge_sum_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Returns Mulliken charge sum inputs.</p>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 </section>
@@ -602,8 +458,8 @@ contains a series of LEXICOGRAPHICALLY SORTED atom labels to search for.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.loewdin_charge_sums.</span></span><span class="sig-name descname"><span class="pre">LoewdinChargeSums</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile_contents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/loewdin_charge_sums.html#LoewdinChargeSums"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.loewdin_charge_sums.LoewdinChargeSums" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DataSectionWithInputs</span></code></p>
 <p>Finds and stores Loewdin charge sum data from a ORCA .out file.</p>
-<section id="id30">
-<h3>Methods<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h3>
+<section id="id20">
+<h3>Methods<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>_search</dt><dd><p>Search the .out file for Loewdin charge sum data.</p>
 </dd>
@@ -614,23 +470,23 @@ contains a series of LEXICOGRAPHICALLY SORTED atom labels to search for.</p>
 <dt class="sig sig-object py" id="src.loewdin_charge_sums.LoewdinChargeSums.get_datum">
 <span class="sig-name descname"><span class="pre">get_datum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/loewdin_charge_sums.html#LoewdinChargeSums.get_datum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.loewdin_charge_sums.LoewdinChargeSums.get_datum" title="Link to this definition">¶</a></dt>
 <dd><p>Gives the sum of Loewdin charges from _data for a set of atoms.</p>
-<section id="id31">
-<h4>Parameters<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h4>
+<section id="id21">
+<h4>Parameters<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>atoms_tuple<span class="classifier">tuple</span></dt><dd><p>A tuple containing strings of the desired atom labels.</p>
 </dd>
 </dl>
 </section>
-<section id="id32">
-<h4>Returns<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h4>
+<section id="id22">
+<h4>Returns<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>str</dt><dd><p>String consisting of the sum of Loewdin charges of the atoms in
 atoms_tuple.</p>
 </dd>
 </dl>
 </section>
-<section id="id33">
-<h4>Raises<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h4>
+<section id="id23">
+<h4>Raises<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>KeyError</dt><dd><p>This occurs when the input atoms tuple can’t be found as a key in
 the dict containing the Loewdin charge sum data.</p>
@@ -652,8 +508,8 @@ an ORCA .out file.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.loewdin_charges.</span></span><span class="sig-name descname"><span class="pre">LoewdinCharges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile_contents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/loewdin_charges.html#LoewdinCharges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.loewdin_charges.LoewdinCharges" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DataSectionWithInputs</span></code></p>
 <p>Finds and stores Loewdin charge data from an ORCA .out file.</p>
-<section id="id34">
-<h3>Methods<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h3>
+<section id="id24">
+<h3>Methods<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>_search</dt><dd><p>Search .out file for Loewdin charge data.</p>
 </dd>
@@ -674,8 +530,8 @@ contains a series of LEXICOGRAPHICALLY SORTED atom labels to search for.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.mulliken_charge_sums.</span></span><span class="sig-name descname"><span class="pre">MullikenChargeSums</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile_contents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/mulliken_charge_sums.html#MullikenChargeSums"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.mulliken_charge_sums.MullikenChargeSums" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DataSectionWithInputs</span></code></p>
 <p>Finds and stores Mulliken charge sum data from a ORCA .out file.</p>
-<section id="id35">
-<h3>Methods<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h3>
+<section id="id25">
+<h3>Methods<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>_search</dt><dd><p>Search the .out file for Mulliken charge sum data.</p>
 </dd>
@@ -686,23 +542,23 @@ contains a series of LEXICOGRAPHICALLY SORTED atom labels to search for.</p>
 <dt class="sig sig-object py" id="src.mulliken_charge_sums.MullikenChargeSums.get_datum">
 <span class="sig-name descname"><span class="pre">get_datum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/mulliken_charge_sums.html#MullikenChargeSums.get_datum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.mulliken_charge_sums.MullikenChargeSums.get_datum" title="Link to this definition">¶</a></dt>
 <dd><p>Gives the sum of Mulliken charges from _data for a set of atoms.</p>
-<section id="id36">
-<h4>Parameters<a class="headerlink" href="#id36" title="Link to this heading">¶</a></h4>
+<section id="id26">
+<h4>Parameters<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>atoms_tuple<span class="classifier">tuple</span></dt><dd><p>A tuple containing strings of the desired atom labels.</p>
 </dd>
 </dl>
 </section>
-<section id="id37">
-<h4>Returns<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h4>
+<section id="id27">
+<h4>Returns<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>str</dt><dd><p>String consisting of the sum of Mulliken charges of the atoms
 in atoms_tuple.</p>
 </dd>
 </dl>
 </section>
-<section id="id38">
-<h4>Raises<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h4>
+<section id="id28">
+<h4>Raises<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>KeyError</dt><dd><p>This occurs when the input atoms tuple can’t be found as a key in
 the dict containing the Mulliken charge sum data.</p>
@@ -724,8 +580,8 @@ an ORCA .out file.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.mulliken_charges.</span></span><span class="sig-name descname"><span class="pre">MullikenCharges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile_contents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/mulliken_charges.html#MullikenCharges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.mulliken_charges.MullikenCharges" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DataSectionWithInputs</span></code></p>
 <p>Finds and stores Mulliken charge data from an ORCA .out file.</p>
-<section id="id39">
-<h3>Methods<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h3>
+<section id="id29">
+<h3>Methods<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>_search</dt><dd><p>Search .out file for Mulliken charge data.</p>
 </dd>
@@ -746,8 +602,8 @@ a CSV file.</p>
 <dt class="sig sig-object py" id="src.orca_out_to_csv.create_csv_from_sds">
 <span class="sig-prename descclassname"><span class="pre">src.orca_out_to_csv.</span></span><span class="sig-name descname"><span class="pre">create_csv_from_sds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sd_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/orca_out_to_csv.html#create_csv_from_sds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.orca_out_to_csv.create_csv_from_sds" title="Link to this definition">¶</a></dt>
 <dd><p>Writes the data in a list of StructureData instances to a CSV file.</p>
-<section id="id40">
-<h3>Parameters<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h3>
+<section id="id30">
+<h3>Parameters<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>sd_list<span class="classifier">list</span></dt><dd><p>List containing the set of StructureData instances that each come
 from the ORCA .out files.</p>
@@ -778,8 +634,8 @@ an excel spreadsheet.</p>
 <dd><p>Uses Workbook to create an excel file and populate the first sheet with the
 desired set of data from the ORCA .out files in the directory, which
 are passed in the form of the dictionary sd_list.</p>
-<section id="id41">
-<h3>Parameters<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h3>
+<section id="id31">
+<h3>Parameters<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>sd_list<span class="classifier">list</span></dt><dd><p>List containing the set of StructureData instances that each come
 from the ORCA .out files.</p>
@@ -808,8 +664,8 @@ a JSON file.</p>
 <dt class="sig sig-object py" id="src.orca_out_to_json.create_json_from_sds">
 <span class="sig-prename descclassname"><span class="pre">src.orca_out_to_json.</span></span><span class="sig-name descname"><span class="pre">create_json_from_sds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sd_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/orca_out_to_json.html#create_json_from_sds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.orca_out_to_json.create_json_from_sds" title="Link to this definition">¶</a></dt>
 <dd><p>Writes the data in a list of StructureData instances to a JSON file.</p>
-<section id="id42">
-<h3>Parameters<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h3>
+<section id="id32">
+<h3>Parameters<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>sd_list<span class="classifier">list</span></dt><dd><p>List containing the set of StructureData instances that each come
 from the ORCA .out files.</p>
@@ -829,16 +685,16 @@ from the ORCA .out files.</p>
 <dt class="sig sig-object py" id="src.orca_out_to_json.make_json_list">
 <span class="sig-prename descclassname"><span class="pre">src.orca_out_to_json.</span></span><span class="sig-name descname"><span class="pre">make_json_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sd_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/orca_out_to_json.html#make_json_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.orca_out_to_json.make_json_list" title="Link to this definition">¶</a></dt>
 <dd><p>Converts the data in a list of StructureData instances to a dict for JSON.</p>
-<section id="id43">
-<h3>Parameters<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h3>
+<section id="id33">
+<h3>Parameters<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>sd_list<span class="classifier">list</span></dt><dd><p>List containing the set of StructureData instances that each come
 from the ORCA .out files.</p>
 </dd>
 </dl>
 </section>
-<section id="id44">
-<h3>Returns<a class="headerlink" href="#id44" title="Link to this heading">¶</a></h3>
+<section id="id34">
+<h3>Returns<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>list</dt><dd><p>List with the data from sd_list configured to be compatible with
 JSON (i.e., tuples are converted to strings).</p>
@@ -857,16 +713,16 @@ an ORCA .out file.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.polarizability.</span></span><span class="sig-name descname"><span class="pre">Polarizability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile_contents</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/polarizability.html#Polarizability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.polarizability.Polarizability" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DataSection</span></code></p>
 <p>Finds and stores polarizability data from a ORCA .out file.</p>
-<section id="id45">
-<h3>Attributes<a class="headerlink" href="#id45" title="Link to this heading">¶</a></h3>
+<section id="id35">
+<h3>Attributes<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>__regex<span class="classifier">str</span></dt><dd><p>Regular expression string used to search the .out file for the
 polarizability data.</p>
 </dd>
 </dl>
 </section>
-<section id="id46">
-<h3>Methods<a class="headerlink" href="#id46" title="Link to this heading">¶</a></h3>
+<section id="id36">
+<h3>Methods<a class="headerlink" href="#id36" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>_find_data</dt><dd><p>Search the .out file for polarizability data, return as dict.</p>
 </dd>
@@ -887,8 +743,8 @@ subclasses as values. It contains methods to get data from these sections.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.structure_data.</span></span><span class="sig-name descname"><span class="pre">StructureData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_sections</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data.html#StructureData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data.StructureData" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Associates a desired subset of data from an ORCA .out file.</p>
-<section id="id47">
-<h3>Attributes<a class="headerlink" href="#id47" title="Link to this heading">¶</a></h3>
+<section id="id37">
+<h3>Attributes<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>__out_filename<span class="classifier">str</span></dt><dd><p>String of the filename of the ORCA .out file this object
 represents.</p>
@@ -901,8 +757,8 @@ instances those subclasses associated with this .out file.</p>
 </dd>
 </dl>
 </section>
-<section id="id48">
-<h3>Methods<a class="headerlink" href="#id48" title="Link to this heading">¶</a></h3>
+<section id="id38">
+<h3>Methods<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>__read_file</dt><dd><p>Converts a text file to a single string using .read().</p>
 </dd>
@@ -932,15 +788,15 @@ corresponding to a given label (key for said dict).</p>
 <span class="sig-name descname"><span class="pre">get_data_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data.html#StructureData.get_data_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data.StructureData.get_data_section" title="Link to this definition">¶</a></dt>
 <dd><p>Gives a DataSection subclass (value) from the __data_sections dict
 given its name (key).</p>
-<section id="id49">
-<h4>Parameters<a class="headerlink" href="#id49" title="Link to this heading">¶</a></h4>
+<section id="id39">
+<h4>Parameters<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>section_name<span class="classifier">str</span></dt><dd><p>Name of a DataSection subclass.</p>
 </dd>
 </dl>
 </section>
-<section id="id50">
-<h4>Returns<a class="headerlink" href="#id50" title="Link to this heading">¶</a></h4>
+<section id="id40">
+<h4>Returns<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>DataSection subclass</dt><dd><p>Instance of a DataSection subclass corresponding to the passed name.</p>
 </dd>
@@ -953,16 +809,16 @@ given its name (key).</p>
 <span class="sig-name descname"><span class="pre">get_data_section_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data.html#StructureData.get_data_section_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data.StructureData.get_data_section_data" title="Link to this definition">¶</a></dt>
 <dd><p>Gives dict containing the data from a particular DataSection subclass
 instance.</p>
-<section id="id51">
-<h4>Parameters<a class="headerlink" href="#id51" title="Link to this heading">¶</a></h4>
+<section id="id41">
+<h4>Parameters<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>section_name<span class="classifier">str</span></dt><dd><p>Name of the DataSection, should be a key in __data_sections
 attribute.</p>
 </dd>
 </dl>
 </section>
-<section id="id52">
-<h4>Returns<a class="headerlink" href="#id52" title="Link to this heading">¶</a></h4>
+<section id="id42">
+<h4>Returns<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>dict</dt><dd><p>Data found by a DataSection subclass instance.</p>
 </dd>
@@ -975,8 +831,8 @@ attribute.</p>
 <span class="sig-name descname"><span class="pre">get_data_section_datum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datum_label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data.html#StructureData.get_data_section_datum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data.StructureData.get_data_section_datum" title="Link to this definition">¶</a></dt>
 <dd><p>Gives ‘datum’ (value from DataSection subclass data dictionary)
 corresponding to a given label (key for said dict).</p>
-<section id="id53">
-<h4>Parameters<a class="headerlink" href="#id53" title="Link to this heading">¶</a></h4>
+<section id="id43">
+<h4>Parameters<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>section_name<span class="classifier">str</span></dt><dd><p>Name of the DataSection, should be a key in __data_sections
 attribute.</p>
@@ -986,8 +842,8 @@ datum.</p>
 </dd>
 </dl>
 </section>
-<section id="id54">
-<h4>Returns<a class="headerlink" href="#id54" title="Link to this heading">¶</a></h4>
+<section id="id44">
+<h4>Returns<a class="headerlink" href="#id44" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>str or dict</dt><dd><p>‘Datum’ corresponding to the datum label key in the DataSection
 data dictionary.</p>
@@ -1001,8 +857,8 @@ data dictionary.</p>
 <span class="sig-name descname"><span class="pre">get_data_sections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data.html#StructureData.get_data_sections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data.StructureData.get_data_sections" title="Link to this definition">¶</a></dt>
 <dd><p>Gives __data_sections attribute, a dictionary that maps names of
 DataSection subclasses to their corresponding instances.</p>
-<section id="id55">
-<h4>Returns<a class="headerlink" href="#id55" title="Link to this heading">¶</a></h4>
+<section id="id45">
+<h4>Returns<a class="headerlink" href="#id45" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>dict</dt><dd><p>__data_sections attribute.</p>
 </dd>
@@ -1014,8 +870,8 @@ DataSection subclasses to their corresponding instances.</p>
 <dt class="sig sig-object py" id="src.structure_data.StructureData.get_input_filename">
 <span class="sig-name descname"><span class="pre">get_input_filename</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data.html#StructureData.get_input_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data.StructureData.get_input_filename" title="Link to this definition">¶</a></dt>
 <dd><p>Gives the filename of the input .txt file.</p>
-<section id="id56">
-<h4>Returns<a class="headerlink" href="#id56" title="Link to this heading">¶</a></h4>
+<section id="id46">
+<h4>Returns<a class="headerlink" href="#id46" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>str</dt><dd><p>__input_filename attribute.</p>
 </dd>
@@ -1027,8 +883,8 @@ DataSection subclasses to their corresponding instances.</p>
 <dt class="sig sig-object py" id="src.structure_data.StructureData.get_out_filename">
 <span class="sig-name descname"><span class="pre">get_out_filename</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data.html#StructureData.get_out_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data.StructureData.get_out_filename" title="Link to this definition">¶</a></dt>
 <dd><p>Gives the filename of the .out file from which the data was taken.</p>
-<section id="id57">
-<h4>Returns<a class="headerlink" href="#id57" title="Link to this heading">¶</a></h4>
+<section id="id47">
+<h4>Returns<a class="headerlink" href="#id47" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>str</dt><dd><p>__out_filename attribute.</p>
 </dd>
@@ -1040,8 +896,8 @@ DataSection subclasses to their corresponding instances.</p>
 <dt class="sig sig-object py" id="src.structure_data.StructureData.get_std_error_msg">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_std_error_msg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data.html#StructureData.get_std_error_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data.StructureData.get_std_error_msg" title="Link to this definition">¶</a></dt>
 <dd><p>Gives the standard error message used by this class.</p>
-<section id="id58">
-<h4>Returns<a class="headerlink" href="#id58" title="Link to this heading">¶</a></h4>
+<section id="id48">
+<h4>Returns<a class="headerlink" href="#id48" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>str</dt><dd><p>__std_error_msg attribute.</p>
 </dd>
@@ -1063,13 +919,13 @@ the StructureData class based on a given filename for an input .txt file.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.structure_data_builder.</span></span><span class="sig-name descname"><span class="pre">StructureDataBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data_builder.html#StructureDataBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data_builder.StructureDataBuilder" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A Builder which creates StructureData instances.</p>
-<section id="id59">
-<h3>Attributes<a class="headerlink" href="#id59" title="Link to this heading">¶</a></h3>
+<section id="id49">
+<h3>Attributes<a class="headerlink" href="#id49" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>__input_filename<span class="classifier">str</span></dt><dd><p>String of filename of .txt file that contains lists of desired atom
 labels for each type of data that will be pulled from the .out file.</p>
 </dd>
-<dt>__input_reader<span class="classifier">InputReaderTxt</span></dt><dd><p>Instance of InputReaderTxt used to retrieve the inputs for the
+<dt>__input_reader<span class="classifier">InputReaderJSON</span></dt><dd><p>Instance of InputReader used to retrieve the inputs for the
 StructureData objects this instance builds.</p>
 </dd>
 </dl>
@@ -1078,15 +934,15 @@ StructureData objects this instance builds.</p>
 <span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/structure_data_builder.html#StructureDataBuilder.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.structure_data_builder.StructureDataBuilder.build" title="Link to this definition">¶</a></dt>
 <dd><p>Creates and returns an instance of StructureData based on the passed
 .out filename and the input filename attribute.</p>
-<section id="id60">
-<h4>Parameters<a class="headerlink" href="#id60" title="Link to this heading">¶</a></h4>
+<section id="id50">
+<h4>Parameters<a class="headerlink" href="#id50" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>out_filename<span class="classifier">str</span></dt><dd><p>String of filename of desired .out file.</p>
 </dd>
 </dl>
 </section>
-<section id="id61">
-<h4>Returns<a class="headerlink" href="#id61" title="Link to this heading">¶</a></h4>
+<section id="id51">
+<h4>Returns<a class="headerlink" href="#id51" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>StructureData</dt><dd><p>Instance of StructureData based on the passed .out filename and the
 input filename attribute.</p>
