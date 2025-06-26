@@ -55,7 +55,7 @@ of the output file. If successful, the script will produce the desired output fi
 
 * Website: https://github.com/pmwaddell
 * Github: [@pmwaddell](https://github.com/pmwaddell)
-* LinkedIn: [@https://www.linkedin.com/in/pmwaddell-ph-d/](https://www.linkedin.com/in/pmwaddell-ph-d/).
+* LinkedIn: [@https://www.linkedin.com/in/pmwaddell-ph-d/](https://www.linkedin.com/in/pmwaddell-ph-d/)
 
 ## Show your support
 
